@@ -5,7 +5,7 @@ import './App.css'
 function App() {
 
   return (
-    <div className='flex items-center justify-start min-h-screen w-screen'>
+    <div className='flex items-center justify-start'>
       <Landing />
     </div>
   )
