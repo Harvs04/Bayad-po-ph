@@ -2,13 +2,7 @@
 @import "tailwindcss";
 
 .content {
-  margin-top: 56px; 
-}
-
-@media (min-width: 768px) {
-  .content {
-    margin-top: 41px;
-  }
+  margin-top: 90px; 
 }
 
 @theme {
