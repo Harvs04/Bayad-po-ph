@@ -1,17 +1,8 @@
-import {
-  MapContainer,
-  TileLayer,
-  Marker,
-  Popup,
-  Polyline,
-  useMapEvents,
-} from "react-leaflet";
 import { useEffect, useState } from "react";
 import "leaflet/dist/leaflet.css";
-import L from "leaflet";
 import polyline from "@mapbox/polyline";
-import markerIconPng from "leaflet/dist/images/marker-icon.png";
 import { useDebounce } from "react-use";
+import MapArea from "../components/MapArea";
 
 const LocationSearch = () => {
   const apiKey = import.meta.env.VITE_LOCATION_IQ_PUBLIC_TOKEN;
@@ -27,7 +18,7 @@ const LocationSearch = () => {
   const [destinationSuggestions, setDestinationSuggestions] = useState([]);
   const [currentLoc, setCurrentLoc] = useState(null);
   const [error, setError] = useState(null);
-  const [markers, setMarkers] = useState([]);
+  const [markers, setMarkers] = useState([null, null]);
   const [route, setRoute] = useState([]);
   const [distance, setDistance] = useState(null);
   const [isOriginSuggestionSelected, setIsOriginSuggestionSelected] =
@@ -36,27 +27,10 @@ const LocationSearch = () => {
     useState(false);
   const [isOriginPinned, setIsOriginPinned] = useState(false);
   const [isDestinationPinned, setIsDestinationPinned] = useState(false);
-  const [didUseCurrentLocation, setDidUseCurrentLocation] = useState([false, false]);
-
-  const MapClickHandler = () => {
-    useMapEvents({
-      click(e) {
-        if (markers.length < 2) {
-          setMarkers([...markers, [e.latlng.lat, e.latlng.lng]]);
-          if (markers.length === 0) {
-            reverseGeocoding(0, e.latlng.lat, e.latlng.lng);
-            setOriginSuggestions([]);
-            setIsOriginPinned(true);
-          } else if (markers.length === 1) {
-            reverseGeocoding(1, e.latlng.lat, e.latlng.lng);
-            setDestinationSuggestions([]);
-            setIsDestinationPinned(true);
-          }
-        }
-      },
-    });
-    return null;
-  };
+  const [didUseCurrentLocation, setDidUseCurrentLocation] = useState([
+    false,
+    false,
+  ]);
 
   const handleChangeInput = (e, index) => {
     const value = e.target.value;
@@ -76,13 +50,11 @@ const LocationSearch = () => {
   const handleClearAll = () => {
     if (startLocation) {
       setStartLocation("");
-      setMarkers((prev) => prev.slice(1));
       setIsOriginPinned(false);
     }
 
     if (endLocation) {
       setEndLocation("");
-      setMarkers((prev) => prev.slice(0));
       setIsDestinationPinned(false);
     }
 
@@ -93,7 +65,7 @@ const LocationSearch = () => {
     if (passengerType) {
       setPassengerType("");
     }
-    setMarkers([]);
+    setMarkers([null, null]);
     setRoute([]);
     setDistance(null);
   };
@@ -138,6 +110,7 @@ const LocationSearch = () => {
   };
 
   const handleSelectSuggestion = (place, index) => {
+    console.log("here!");
     setMarkers((prevMarkers) => {
       const updated = [...prevMarkers];
       updated[index] = [place.lat, place.lon];
@@ -154,21 +127,22 @@ const LocationSearch = () => {
     }
   };
 
-  const handleDeleteOrigin = () => {
-    setStartLocation("");
-    setMarkers((prev) => prev.slice(1));
-    setIsOriginPinned(false);
-    setRoute([]);
-    setDistance(null);
-  };
+ const handleDeleteOrigin = () => {
+  setStartLocation("");
+  setMarkers((prev) => [null, prev[1]]);
+  setIsOriginPinned(false);
+  setRoute([]);
+  setDistance(null);
+};
 
-  const handleDeleteDestination = () => {
-    setEndLocation("");
-    setMarkers((prev) => prev.slice(0, -1));
-    setIsDestinationPinned(false);
-    setRoute([]);
-    setDistance(null);
-  };
+const handleDeleteDestination = () => {
+  setEndLocation("");
+  setMarkers((prev) => [prev[0], null]);
+  setIsDestinationPinned(false);
+  setRoute([]);
+  setDistance(null);
+};
+
 
   useDebounce(() => setDebouncedStartLocation(startLocation), 500, [
     startLocation,
@@ -228,7 +202,7 @@ const LocationSearch = () => {
       if (
         debouncedEndLocation.trim().length === 0 ||
         isDestinationSuggestionSelected ||
-        isDestinationPinned || 
+        isDestinationPinned ||
         didUseCurrentLocation[1]
       )
         return;
@@ -250,35 +224,16 @@ const LocationSearch = () => {
   return (
     <div className="relative">
       <div className="h-screen">
-        <MapContainer
-          center={[14.693099, 121.058873]}
-          zoom={14}
-          scrollWheelZoom={true}
-          style={{ height: "100%", width: "100%" }}
-        >
-          <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          />
-
-          <MapClickHandler />
-
-          {markers.map((pos, idx) => (
-            <Marker
-              key={idx}
-              position={pos}
-              icon={L.icon({
-                iconUrl: markerIconPng,
-                iconSize: [25, 41],
-                iconAnchor: [12, 41],
-              })}
-            >
-              <Popup>Point {idx + 1}</Popup>
-            </Marker>
-          ))}
-
-          {route.length > 0 && <Polyline positions={route} color="blue" />}
-        </MapContainer>
+        <MapArea
+          markers={markers}
+          setMarkers={setMarkers}
+          reverseGeocoding={reverseGeocoding}
+          setOriginSuggestions={setOriginSuggestions}
+          setIsOriginPinned={setIsOriginPinned}
+          setDestinationSuggestions={setDestinationSuggestions}
+          setIsDestinationPinned={setIsDestinationPinned}
+          route={route}
+        />
       </div>
 
       <section className="absolute bottom-0 right-4 md:top-4 z-[9999] bg-[#fbfdfb] rounded-lg shadow-sm pointer-events-auto max-w-sm h-fit">
@@ -330,7 +285,18 @@ const LocationSearch = () => {
 
               <button
                 type="button"
-                onClick={() => {reverseGeocoding(0, currentLoc.latitude, currentLoc.longitude); setDidUseCurrentLocation(prev => [true, prev[1]]); }}
+                onClick={() => {
+                  reverseGeocoding(
+                    0,
+                    currentLoc.latitude,
+                    currentLoc.longitude
+                  );
+                  setDidUseCurrentLocation((prev) => [true, prev[1]]);
+                  setMarkers((prev) => [
+                    [currentLoc.latitude, currentLoc.longitude],
+                    prev[1], 
+                  ]);
+                }}
                 className="absolute right-8 top-1/2 -translate-y-1/2 cursor-pointer hover:bg-blue-50 rounded p-1 transition-colors"
                 title="Use current location"
               >
@@ -347,6 +313,7 @@ const LocationSearch = () => {
               <button
                 type="button"
                 onClick={handleDeleteOrigin}
+                disabled={markers[0] === undefined}
                 title="Remove origin"
                 className="absolute right-1 top-1/2 -translate-y-1/2 cursor-pointer hover:bg-red-50 rounded p-1 transition-colors"
               >
@@ -393,7 +360,7 @@ const LocationSearch = () => {
                   >
                     <path d="M13,9H11V7H13M13,17H11V11H13M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z" />
                   </svg>
-                  
+
                   <div className="absolute -top-8 left-1/2 -translate-x-1/2 mt-2 w-max max-w-xs px-2 py-1 text-xs text-white bg-gray-800 rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-50">
                     You may pin a location if the field is empty.
                   </div>
@@ -412,7 +379,18 @@ const LocationSearch = () => {
 
               <button
                 type="button"
-                onClick={() => {reverseGeocoding(1, currentLoc.latitude, currentLoc.longitude); setDidUseCurrentLocation(prev => [prev[0], true]); }}
+                onClick={() => {
+                  reverseGeocoding(
+                    1,
+                    currentLoc.latitude,
+                    currentLoc.longitude
+                  );
+                  setDidUseCurrentLocation((prev) => [prev[0], true]);
+                  setMarkers((prev) => [
+                    prev[0], 
+                    [currentLoc.latitude, currentLoc.longitude]
+                  ]);
+                }}
                 className="absolute right-8 top-1/2 -translate-y-1/2 cursor-pointer hover:bg-blue-50 rounded p-1 transition-colors"
                 title="Use current location"
               >
@@ -429,6 +407,7 @@ const LocationSearch = () => {
               <button
                 type="button"
                 onClick={handleDeleteDestination}
+                disabled={markers[1] === undefined}
                 title="Remove destination"
                 className="absolute right-1 top-1/2 -translate-y-1/2 cursor-pointer hover:bg-red-50 rounded p-1 transition-colors"
               >
@@ -549,6 +528,17 @@ const LocationSearch = () => {
               {currentLoc?.latitude + ", " + currentLoc?.longitude}
             </p>
           )}
+          <p>MARKERS: </p>
+          {/* {markers.length === 2 && (
+            <ul className="list-disc pl-5">
+              <li>
+                {`Marker 1: Latitude: ${markers[0][0] ?? "Empty"}, Longitude: ${markers[0][1] ?? "Empty"}`}
+              </li>
+              <li>
+                {`Marker 2: Latitude: ${markers[1][0] ?? "Empty"}, Longitude: ${markers[1][1] ?? "Empty"}`}
+              </li>
+            </ul>
+          )} */}
           <p>{markers.length}</p>
           {error && <span className="text-red-500 text-sm">{error}</span>}
         </div>
