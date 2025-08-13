@@ -36,6 +36,7 @@ const LocationSearch = () => {
     useState(false);
   const [isOriginPinned, setIsOriginPinned] = useState(false);
   const [isDestinationPinned, setIsDestinationPinned] = useState(false);
+  const [didUseCurrentLocation, setDidUseCurrentLocation] = useState([false, false]);
 
   const MapClickHandler = () => {
     useMapEvents({
@@ -203,7 +204,8 @@ const LocationSearch = () => {
       if (
         debouncedStartLocation.trim().length === 0 ||
         isOriginSuggestionSelected ||
-        isOriginPinned
+        isOriginPinned ||
+        didUseCurrentLocation[0]
       )
         return;
 
@@ -226,7 +228,8 @@ const LocationSearch = () => {
       if (
         debouncedEndLocation.trim().length === 0 ||
         isDestinationSuggestionSelected ||
-        isDestinationPinned
+        isDestinationPinned || 
+        didUseCurrentLocation[1]
       )
         return;
 
@@ -327,7 +330,7 @@ const LocationSearch = () => {
 
               <button
                 type="button"
-                onClick={() => reverseGeocoding(0, currentLoc.latitude, currentLoc.longitude)}
+                onClick={() => {reverseGeocoding(0, currentLoc.latitude, currentLoc.longitude); setDidUseCurrentLocation(prev => [true, prev[1]]); }}
                 className="absolute right-8 top-1/2 -translate-y-1/2 cursor-pointer hover:bg-blue-50 rounded p-1 transition-colors"
                 title="Use current location"
               >
@@ -390,8 +393,7 @@ const LocationSearch = () => {
                   >
                     <path d="M13,9H11V7H13M13,17H11V11H13M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z" />
                   </svg>
-
-                  {/* Tooltip */}
+                  
                   <div className="absolute -top-8 left-1/2 -translate-x-1/2 mt-2 w-max max-w-xs px-2 py-1 text-xs text-white bg-gray-800 rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-50">
                     You may pin a location if the field is empty.
                   </div>
@@ -410,7 +412,7 @@ const LocationSearch = () => {
 
               <button
                 type="button"
-                onClick={() => reverseGeocoding(1, currentLoc.latitude, currentLoc.longitude)}
+                onClick={() => {reverseGeocoding(1, currentLoc.latitude, currentLoc.longitude); setDidUseCurrentLocation(prev => [prev[0], true]); }}
                 className="absolute right-8 top-1/2 -translate-y-1/2 cursor-pointer hover:bg-blue-50 rounded p-1 transition-colors"
                 title="Use current location"
               >
