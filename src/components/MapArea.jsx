@@ -16,7 +16,10 @@ const RecenterToOrigin = ({ markers }) => {
 
   useEffect(() => {
     if (Array.isArray(markers[0]) && markers[0].length === 2) {
-      map.setView(markers[0], map.getZoom());
+      map.flyTo(markers[0], map.getZoom(), {
+        animate: true,
+        duration: 1.2,
+      });
     }
   }, [markers[0], map]);
 
