@@ -9,7 +9,6 @@ import {
 } from "react-leaflet";
 import L from "leaflet";
 import { useEffect } from "react";
-import markerIconPng from "leaflet/dist/images/marker-icon.png";
 
 const RecenterToOrigin = ({ markers }) => {
   const map = useMap();
@@ -27,6 +26,7 @@ const RecenterToOrigin = ({ markers }) => {
 };
 
 const MapArea = ({
+  currentLocation,
   markers,
   setMarkers,
   reverseGeocoding,
@@ -66,8 +66,8 @@ const MapArea = ({
   return (
     <>
       <MapContainer
-        center={[14.693099, 121.058873]}
-        zoom={15}
+        center={currentLocation ? [currentLocation.lat, currentLocation.lng] : [14.651477362493026, 121.0493153669049]} 
+        zoom={currentLocation ? 17 : 15}
         scrollWheelZoom={true}
         style={{ height: "100%", width: "100%" }}
       >
@@ -86,16 +86,23 @@ const MapArea = ({
               key={idx}
               position={pos}
               icon={L.icon({
-                iconUrl: markerIconPng,
+                iconUrl:
+                  idx === 0
+                    ? "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png"
+                    : "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png",
+                shadowUrl:
+                  "https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png",
                 iconSize: [25, 41],
                 iconAnchor: [12, 41],
+                popupAnchor: [1, -34],
+                shadowSize: [41, 41],
               })}
             >
-              <Popup>Point {idx + 1}</Popup>
+              <Popup>{idx === 0 ? "Start Point" : "End Point"}</Popup>
             </Marker>
           ))}
 
-        {route.length > 0 && <Polyline positions={route} color="blue" />}
+        {route.length > 0 && <Polyline positions={route} color="green" />}
       </MapContainer>
     </>
   );

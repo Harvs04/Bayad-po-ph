@@ -225,6 +225,7 @@ const handleDeleteDestination = () => {
     <div className="relative">
       <div className="h-screen">
         <MapArea
+          currentLocation={currentLoc}
           markers={markers}
           setMarkers={setMarkers}
           reverseGeocoding={reverseGeocoding}
@@ -441,7 +442,7 @@ const handleDeleteDestination = () => {
               htmlFor="vehicle_type"
               className="text-sm font-medium text-[#4d4d4d]"
             >
-              Vehicle <span className="text-red-500 text-xs">(Required)</span>
+              Vehicle Type <span className="text-red-500 text-xs">(Required)</span>
             </label>
             <select
               id="vehicle_type"
@@ -453,6 +454,7 @@ const handleDeleteDestination = () => {
               <option value="traditional_jeepney">Traditional Jeepney</option>
               <option value="e_jeepney">Electric Jeepney</option>
               <option value="uv_express">UV Express</option>
+              <option value="taxi">Taxi</option>
               <option value="ordinary_city_bus">Ordinary City Bus</option>
               <option value="aircon_city_bus">Airconditioned City Bus</option>
               <option value="ordinary_prov_bus">Ordinary Provincial Bus</option>
@@ -470,7 +472,7 @@ const handleDeleteDestination = () => {
               htmlFor="passenger_type"
               className="text-sm font-medium text-[#4d4d4d]"
             >
-              Type of passenger{" "}
+              Passenger Type{" "}
               <span className="text-red-500 text-xs">(Required)</span>
             </label>
             <select
