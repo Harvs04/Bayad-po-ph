@@ -85,6 +85,7 @@ const LocationSearch = () => {
     setMarkers([null, null]);
     setRoute([]);
     setDistance(null);
+    setIsSubmitted(false);
   };
 
   const reverseGeocoding = async (index, lat, long) => {
@@ -145,20 +146,13 @@ const LocationSearch = () => {
     }
   };
 
-  const handleDeleteOrigin = () => {
+  const handleDeletePoint = (index) => {
     setStartLocation("");
-    setMarkers((prev) => [null, prev[1]]);
-    setIsOriginPinned(false);
+    setMarkers((prev) => index === 0 ? [null, prev[1]] : [prev[0], null]);
+    index === 0 ? setIsOriginPinned(false) : setIsDestinationPinned(false);
     setRoute([]);
     setDistance(null);
-  };
-
-  const handleDeleteDestination = () => {
-    setEndLocation("");
-    setMarkers((prev) => [prev[0], null]);
-    setIsDestinationPinned(false);
-    setRoute([]);
-    setDistance(null);
+    setIsSubmitted(false);
   };
 
   useDebounce(() => setDebouncedStartLocation(startLocation), 500, [
@@ -320,7 +314,7 @@ const LocationSearch = () => {
 
               <button
                 type="button"
-                onClick={handleDeleteOrigin}
+                onClick={() => handleDeletePoint(0)}
                 disabled={markers[0] === undefined}
                 title="Remove origin"
                 className="absolute right-1 top-1/2 -translate-y-1/2 cursor-pointer hover:bg-red-50 rounded p-1 transition-colors"
@@ -403,7 +397,7 @@ const LocationSearch = () => {
 
               <button
                 type="button"
-                onClick={handleDeleteDestination}
+                onClick={() => handleDeletePoint(1)}
                 disabled={markers[1] === undefined}
                 title="Remove destination"
                 className="absolute right-1 top-1/2 -translate-y-1/2 cursor-pointer hover:bg-red-50 rounded p-1 transition-colors"

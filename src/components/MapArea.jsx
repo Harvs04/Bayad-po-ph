@@ -71,7 +71,7 @@ const MapArea = ({
       if (isSubmitted && markers[0] && markers[1]) {
         const bounds = [markers[0], markers[1]];
         map.flyToBounds(bounds, {
-          padding: [150, 150],
+          padding: [75, 75],
           duration: 1.2, 
         });
       }
