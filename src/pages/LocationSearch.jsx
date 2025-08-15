@@ -245,6 +245,7 @@ const LocationSearch = () => {
           setDestinationSuggestions={setDestinationSuggestions}
           setIsDestinationPinned={setIsDestinationPinned}
           route={route}
+          distance={distance}
           isSubmitted={isSubmitted}
         />
       </div>

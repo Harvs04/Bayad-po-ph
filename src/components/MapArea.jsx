@@ -35,6 +35,7 @@ const MapArea = ({
   setDestinationSuggestions,
   setIsDestinationPinned,
   route,
+  distance,
   isSubmitted,
 }) => {
   const MapClickHandler = () => {
@@ -64,18 +65,18 @@ const MapArea = ({
     return null;
   };
 
-  const RecenterToRoute = ({ markers, isSubmitted }) => {
+  const RecenterToRoute = ({ markers, isSubmitted, distance }) => {
     const map = useMap();
 
     useEffect(() => {
       if (isSubmitted && markers[0] && markers[1]) {
         const bounds = [markers[0], markers[1]];
         map.flyToBounds(bounds, {
-          padding: [75, 75],
+          padding: distance > 10 ? [90, 90] : [150, 150],
           duration: 1.2, 
         });
       }
-    }, [isSubmitted, markers, map]);
+    }, [isSubmitted, markers, map, distance]);
 
     return null;
   };
@@ -98,7 +99,7 @@ const MapArea = ({
         />
 
         <RecenterToOrigin markers={markers} />
-        <RecenterToRoute markers={markers} isSubmitted={isSubmitted} />
+        <RecenterToRoute markers={markers} isSubmitted={isSubmitted} distance={distance} />
         <MapClickHandler />
 
         {markers
