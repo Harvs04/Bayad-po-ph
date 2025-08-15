@@ -31,6 +31,7 @@ const LocationSearch = () => {
     false,
     false,
   ]);
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   const handleChangeInput = (e, index) => {
     const value = e.target.value;
@@ -105,6 +106,7 @@ const LocationSearch = () => {
 
   const fetchRoute = async (e) => {
     e.preventDefault();
+    setIsSubmitted(true);
     if (markers.length === 2) {
       const [start, end] = markers;
       const url = `https://us1.locationiq.com/v1/directions/driving/${start[1]},${start[0]};${end[1]},${end[0]}?key=${apiKey}&overview=simplified&annotations=false`;
@@ -249,6 +251,7 @@ const LocationSearch = () => {
           setDestinationSuggestions={setDestinationSuggestions}
           setIsDestinationPinned={setIsDestinationPinned}
           route={route}
+          isSubmitted={isSubmitted}
         />
       </div>
 
@@ -509,16 +512,22 @@ const LocationSearch = () => {
             Clear All
           </button>
         </form>
-        <div className="p-2">
-          {/* {distance && <p className="mt-2">Distance: {distance} km</p>}
-          {currentLoc && (
-            <p className="mt-2">
-              You are currently at:{" "}
-              {currentLoc?.latitude + ", " + currentLoc?.longitude}
-            </p>
-          )} */}
-          {error && <span className="text-center text-red-500 text-sm">{error}</span>}
-        </div>
+        {route.length > 0 && (
+          <>
+            <hr className="mb-3 mx-4 border-slate-400" /> 
+            <div className="m-4 p-4 rounded bg-[#4CAF4F] text-white text-sm">
+            Results: 
+            {distance && <p className="mt-2">Distance: {distance} km</p>}
+            {currentLoc && (
+              <p className="mt-2">
+                You are currently at:{" "}
+                {currentLoc?.latitude + ", " + currentLoc?.longitude}
+              </p>
+            )}
+            {error && <span className="text-center text-red-500 text-sm">{error}</span>}
+            </div>
+          </>
+        )}
       </section>
     </div>
   );

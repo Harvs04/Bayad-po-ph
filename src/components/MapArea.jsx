@@ -35,6 +35,7 @@ const MapArea = ({
   setDestinationSuggestions,
   setIsDestinationPinned,
   route,
+  isSubmitted,
 }) => {
   const MapClickHandler = () => {
     useMapEvents({
@@ -63,10 +64,30 @@ const MapArea = ({
     return null;
   };
 
+  const RecenterToRoute = ({ markers, isSubmitted }) => {
+    const map = useMap();
+
+    useEffect(() => {
+      if (isSubmitted && markers[0] && markers[1]) {
+        const bounds = [markers[0], markers[1]];
+        map.flyToBounds(bounds, {
+          padding: [150, 150],
+          duration: 1.2, 
+        });
+      }
+    }, [isSubmitted, markers, map]);
+
+    return null;
+  };
+
   return (
     <>
       <MapContainer
-        center={currentLocation ? [currentLocation.lat, currentLocation.lng] : [14.651477362493026, 121.0493153669049]} 
+        center={
+          currentLocation
+            ? [currentLocation.lat, currentLocation.lng]
+            : [14.651477362493026, 121.0493153669049]
+        }
         zoom={currentLocation ? 17 : 15}
         scrollWheelZoom={true}
         style={{ height: "100%", width: "100%" }}
@@ -77,6 +98,7 @@ const MapArea = ({
         />
 
         <RecenterToOrigin markers={markers} />
+        <RecenterToRoute markers={markers} isSubmitted={isSubmitted} />
         <MapClickHandler />
 
         {markers
