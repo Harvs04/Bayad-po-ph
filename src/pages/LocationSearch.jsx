@@ -103,7 +103,8 @@ const LocationSearch = () => {
     }
   };
 
-  const fetchRoute = async () => {
+  const fetchRoute = async (e) => {
+    e.preventDefault();
     if (markers.length === 2) {
       const [start, end] = markers;
       const url = `https://us1.locationiq.com/v1/directions/driving/${start[1]},${start[0]};${end[1]},${end[0]}?key=${apiKey}&overview=simplified&annotations=false`;
@@ -252,7 +253,7 @@ const LocationSearch = () => {
       </div>
 
       <section className="absolute bottom-0 right-4 md:top-4 z-[9999] bg-[#fbfdfb] rounded-lg shadow-sm pointer-events-auto max-w-sm h-fit">
-        <div className="flex items-center justify-center gap-2 w-full rounded-t-lg py-4 px-2 bg-[#4CAF4F]">
+        <div className="flex items-center justify-center gap-2 w-full rounded-t-lg p-4 bg-[#4CAF4F]">
           <img
             src="./../src/assets/jeepney_white.svg"
             alt="bayadpo_logo"
@@ -490,6 +491,7 @@ const LocationSearch = () => {
               passengerType === "" ||
               vehicleType === ""
             }
+            onClick={fetchRoute}
           >
             Calculate Fare
           </button>
@@ -508,34 +510,14 @@ const LocationSearch = () => {
           </button>
         </form>
         <div className="p-2">
-          {markers.length === 2 && (
-            <button
-              className="bg-blue-500 text-white p-2 rounded"
-              onClick={fetchRoute}
-            >
-              Get Route & Distance
-            </button>
-          )}
-          {distance && <p className="mt-2">Distance: {distance} km</p>}
+          {/* {distance && <p className="mt-2">Distance: {distance} km</p>}
           {currentLoc && (
             <p className="mt-2">
               You are currently at:{" "}
               {currentLoc?.latitude + ", " + currentLoc?.longitude}
             </p>
-          )}
-          <p>MARKERS: </p>
-          {/* {markers.length === 2 && (
-            <ul className="list-disc pl-5">
-              <li>
-                {`Marker 1: Latitude: ${markers[0][0] ?? "Empty"}, Longitude: ${markers[0][1] ?? "Empty"}`}
-              </li>
-              <li>
-                {`Marker 2: Latitude: ${markers[1][0] ?? "Empty"}, Longitude: ${markers[1][1] ?? "Empty"}`}
-              </li>
-            </ul>
           )} */}
-          <p>{markers.length}</p>
-          {error && <span className="text-red-500 text-sm">{error}</span>}
+          {error && <span className="text-center text-red-500 text-sm">{error}</span>}
         </div>
       </section>
     </div>
