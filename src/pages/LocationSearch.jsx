@@ -47,6 +47,22 @@ const LocationSearch = () => {
     }
   };
 
+  const handleUserCurrentLocation = (index) => {
+    if (!currentLoc) {
+      alert("Please allow location access to use this feature.");
+      return;
+    }
+    reverseGeocoding(index, currentLoc.latitude, currentLoc.longitude);
+    setDidUseCurrentLocation((prev) =>
+      index === 0 ? [true, prev[1]] : [prev[0], true]
+    );
+    setMarkers((prev) =>
+      index === 0
+        ? [[currentLoc.latitude, currentLoc.longitude], prev[1]]
+        : [prev[0], [currentLoc.latitude, currentLoc.longitude]]
+    );
+  };
+
   const handleClearAll = () => {
     if (startLocation) {
       setStartLocation("");
@@ -110,7 +126,6 @@ const LocationSearch = () => {
   };
 
   const handleSelectSuggestion = (place, index) => {
-    console.log("here!");
     setMarkers((prevMarkers) => {
       const updated = [...prevMarkers];
       updated[index] = [place.lat, place.lon];
@@ -127,22 +142,21 @@ const LocationSearch = () => {
     }
   };
 
- const handleDeleteOrigin = () => {
-  setStartLocation("");
-  setMarkers((prev) => [null, prev[1]]);
-  setIsOriginPinned(false);
-  setRoute([]);
-  setDistance(null);
-};
+  const handleDeleteOrigin = () => {
+    setStartLocation("");
+    setMarkers((prev) => [null, prev[1]]);
+    setIsOriginPinned(false);
+    setRoute([]);
+    setDistance(null);
+  };
 
-const handleDeleteDestination = () => {
-  setEndLocation("");
-  setMarkers((prev) => [prev[0], null]);
-  setIsDestinationPinned(false);
-  setRoute([]);
-  setDistance(null);
-};
-
+  const handleDeleteDestination = () => {
+    setEndLocation("");
+    setMarkers((prev) => [prev[0], null]);
+    setIsDestinationPinned(false);
+    setRoute([]);
+    setDistance(null);
+  };
 
   useDebounce(() => setDebouncedStartLocation(startLocation), 500, [
     startLocation,
@@ -286,18 +300,7 @@ const handleDeleteDestination = () => {
 
               <button
                 type="button"
-                onClick={() => {
-                  reverseGeocoding(
-                    0,
-                    currentLoc.latitude,
-                    currentLoc.longitude
-                  );
-                  setDidUseCurrentLocation((prev) => [true, prev[1]]);
-                  setMarkers((prev) => [
-                    [currentLoc.latitude, currentLoc.longitude],
-                    prev[1], 
-                  ]);
-                }}
+                onClick={() => handleUserCurrentLocation(0)}
                 className="absolute right-8 top-1/2 -translate-y-1/2 cursor-pointer hover:bg-blue-50 rounded p-1 transition-colors"
                 title="Use current location"
               >
@@ -380,18 +383,7 @@ const handleDeleteDestination = () => {
 
               <button
                 type="button"
-                onClick={() => {
-                  reverseGeocoding(
-                    1,
-                    currentLoc.latitude,
-                    currentLoc.longitude
-                  );
-                  setDidUseCurrentLocation((prev) => [prev[0], true]);
-                  setMarkers((prev) => [
-                    prev[0], 
-                    [currentLoc.latitude, currentLoc.longitude]
-                  ]);
-                }}
+                onClick={() => handleUserCurrentLocation(1)}
                 className="absolute right-8 top-1/2 -translate-y-1/2 cursor-pointer hover:bg-blue-50 rounded p-1 transition-colors"
                 title="Use current location"
               >
@@ -442,7 +434,8 @@ const handleDeleteDestination = () => {
               htmlFor="vehicle_type"
               className="text-sm font-medium text-[#4d4d4d]"
             >
-              Vehicle Type <span className="text-red-500 text-xs">(Required)</span>
+              Vehicle Type{" "}
+              <span className="text-red-500 text-xs">(Required)</span>
             </label>
             <select
               id="vehicle_type"
