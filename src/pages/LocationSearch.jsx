@@ -147,12 +147,19 @@ const LocationSearch = () => {
   };
 
   const handleDeletePoint = (index) => {
-    setStartLocation("");
-    setMarkers((prev) => index === 0 ? [null, prev[1]] : [prev[0], null]);
-    index === 0 ? setIsOriginPinned(false) : setIsDestinationPinned(false);
     setRoute([]);
     setDistance(null);
     setIsSubmitted(false);
+
+    if (index === 0) {
+      setStartLocation("");
+      setMarkers((prev) => [null, prev[1]]);
+      setIsOriginPinned(false)
+    } else if (index === 1) {
+      setEndLocation("");
+      setMarkers((prev) => [prev[0], null]);
+      setIsDestinationPinned(false)
+    }
   };
 
   useDebounce(() => setDebouncedStartLocation(startLocation), 500, [
@@ -316,9 +323,9 @@ const LocationSearch = () => {
               <button
                 type="button"
                 onClick={() => handleDeletePoint(0)}
-                disabled={markers[0] === undefined}
+                disabled={markers[0] === null}
                 title="Remove origin"
-                className="absolute right-1 top-1/2 -translate-y-1/2 cursor-pointer hover:bg-red-50 rounded p-1 transition-colors"
+                className="absolute right-1 top-1/2 -translate-y-1/2 cursor-pointer enabled:hover:bg-red-50 rounded p-1 transition-colors disabled:cursor-not-allowed"
               >
                 <svg
                   fill="#EB2020"
@@ -399,9 +406,9 @@ const LocationSearch = () => {
               <button
                 type="button"
                 onClick={() => handleDeletePoint(1)}
-                disabled={markers[1] === undefined}
+                disabled={markers[1] === null}
                 title="Remove destination"
-                className="absolute right-1 top-1/2 -translate-y-1/2 cursor-pointer hover:bg-red-50 rounded p-1 transition-colors"
+                className="absolute right-1 top-1/2 -translate-y-1/2 cursor-pointer enabled:hover:bg-red-50 rounded p-1 transition-colors disabled:cursor-not-allowed"
               >
                 <svg
                   fill="#EB2020"
