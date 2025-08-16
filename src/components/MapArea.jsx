@@ -73,7 +73,7 @@ const MapArea = ({
         const bounds = [markers[0], markers[1]];
         map.flyToBounds(bounds, {
           padding: distance > 10 ? [90, 90] : [150, 150],
-          duration: 1.2, 
+          duration: 1.2,
         });
       }
     }, [isSubmitted, markers, map, distance]);
@@ -99,20 +99,27 @@ const MapArea = ({
         />
 
         <RecenterToOrigin markers={markers} />
-        <RecenterToRoute markers={markers} isSubmitted={isSubmitted} distance={distance} />
+        <RecenterToRoute
+          markers={markers}
+          isSubmitted={isSubmitted}
+          distance={distance}
+        />
         <MapClickHandler />
 
-        {markers
-          .filter((pos) => Array.isArray(pos) && pos.length === 2)
-          .map((pos, idx) => (
+        {markers.map((pos, idx) => {
+          if (!Array.isArray(pos) || pos.length !== 2) return null;
+
+          const isOrigin = idx === 0; 
+          const iconUrl = isOrigin
+            ? "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png"
+            : "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png";
+
+          return (
             <Marker
               key={idx}
               position={pos}
               icon={L.icon({
-                iconUrl:
-                  idx === 0
-                    ? "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png"
-                    : "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png",
+                iconUrl,
                 shadowUrl:
                   "https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png",
                 iconSize: [25, 41],
@@ -121,9 +128,10 @@ const MapArea = ({
                 shadowSize: [41, 41],
               })}
             >
-              <Popup>{idx === 0 ? "Start Point" : "End Point"}</Popup>
+              <Popup>{isOrigin ? "Start Point" : "End Point"}</Popup>
             </Marker>
-          ))}
+          );
+        })}
 
         {route.length > 0 && <Polyline positions={route} color="green" />}
       </MapContainer>
