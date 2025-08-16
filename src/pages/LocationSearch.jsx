@@ -3,6 +3,7 @@ import "leaflet/dist/leaflet.css";
 import polyline from "@mapbox/polyline";
 import { useDebounce } from "react-use";
 import MapArea from "../components/MapArea";
+import InputForm from "../components/InputForm";
 
 const LocationSearch = () => {
   const apiKey = import.meta.env.VITE_LOCATION_IQ_PUBLIC_TOKEN;
@@ -20,6 +21,7 @@ const LocationSearch = () => {
   const [error, setError] = useState(null);
   const [markers, setMarkers] = useState([null, null]);
   const [route, setRoute] = useState([]);
+  const [duration, setDuration] = useState(0);
   const [distance, setDistance] = useState(null);
   const [isOriginSuggestionSelected, setIsOriginSuggestionSelected] =
     useState(false);
@@ -84,6 +86,7 @@ const LocationSearch = () => {
     }
     setMarkers([null, null]);
     setRoute([]);
+    setDuration(0);
     setDistance(null);
     setIsSubmitted(false);
   };
@@ -115,12 +118,14 @@ const LocationSearch = () => {
       try {
         const res = await fetch(url);
         const data = await res.json();
+        console.log(data);
 
         if (data.routes && data.routes.length > 0) {
           const encoded = data.routes[0].geometry;
           const coords = polyline.decode(encoded);
 
           setRoute(coords);
+          setDuration(data.routes[0].duration);
           setDistance((data.routes[0].distance / 1000).toFixed(2));
         }
       } catch (err) {
@@ -148,17 +153,18 @@ const LocationSearch = () => {
 
   const handleDeletePoint = (index) => {
     setRoute([]);
+    setDuration(0);
     setDistance(null);
     setIsSubmitted(false);
 
     if (index === 0) {
       setStartLocation("");
       setMarkers((prev) => [null, prev[1]]);
-      setIsOriginPinned(false)
+      setIsOriginPinned(false);
     } else if (index === 1) {
       setEndLocation("");
       setMarkers((prev) => [prev[0], null]);
-      setIsDestinationPinned(false)
+      setIsDestinationPinned(false);
     }
   };
 
@@ -258,275 +264,200 @@ const LocationSearch = () => {
       </div>
 
       <section className="absolute bottom-0 right-4 md:top-4 z-[9999] bg-[#fbfdfb] rounded-lg shadow-sm pointer-events-auto max-w-sm h-fit">
-        <div className="flex items-center justify-center gap-2 w-full rounded-t-lg p-4 bg-[#4CAF4F]">
-          <img
-            src="./../src/assets/jeepney_white.svg"
-            alt="bayadpo_logo"
-            className="w-6"
-          />
-          <p className="text-white">
-            Please provide the following information.
-          </p>
-        </div>
-        <form className="p-4 space-y-2.5">
-          <div className="relative flex-col items-start gap-1 w-full">
-            <label
-              htmlFor="source"
-              className="block mb-1 text-sm font-medium text-[#4d4d4d]"
-            >
-              <div className="flex items-center gap-1">
-                Pickup point{" "}
-                <span className="text-red-500 text-xs">(Required)</span>
-                <div className="relative group">
-                  <svg
-                    className="w-4 cursor-pointer"
-                    fill="#4d4d4d"
-                    xmlns="http://www.w3.org/2000/svg"
-                    id="mdi-information"
-                    viewBox="0 0 24 24"
-                  >
-                    <path d="M13,9H11V7H13M13,17H11V11H13M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z" />
-                  </svg>
-
-                  <div className="absolute -top-8 left-1/2 -translate-x-1/2 mt-2 w-max max-w-xs px-2 py-1 text-xs text-white bg-gray-800 rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-50">
-                    You may pin a location if this field is empty.
-                  </div>
-                </div>
-              </div>
-            </label>
-
-            <div className="relative flex items-center w-full">
-              <input
-                id="source"
-                type="text"
-                value={startLocation}
-                onChange={(e) => handleChangeInput(e, 0)}
-                className="p-2 pr-16 text-[15px] text-[#4d4d4d] border border-[#4d4d4d] rounded-md w-full"
-              />
-
-              <button
-                type="button"
-                onClick={() => handleUserCurrentLocation(0)}
-                className="absolute right-8 top-1/2 -translate-y-1/2 cursor-pointer hover:bg-blue-50 rounded p-1 transition-colors"
-                title="Use current location"
-              >
-                <svg
-                  fill="#2196F3"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  className="w-5 h-5"
-                >
-                  <path d="M12,8A4,4 0 0,1 16,12A4,4 0 0,1 12,16A4,4 0 0,1 8,12A4,4 0 0,1 12,8M3.05,13H1V11H3.05C3.5,6.83 6.83,3.5 11,3.05V1H13V3.05C17.17,3.5 20.5,6.83 20.95,11H23V13H20.95C20.5,17.17 17.17,20.5 13,20.95V23H11V20.95C6.83,20.5 3.5,17.17 3.05,13M12,5A7,7 0 0,0 5,12A7,7 0 0,0 12,19A7,7 0 0,0 19,12A7,7 0 0,0 12,5Z" />
-                </svg>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleDeletePoint(0)}
-                disabled={markers[0] === null}
-                title="Remove origin"
-                className="absolute right-1 top-1/2 -translate-y-1/2 cursor-pointer enabled:hover:bg-red-50 rounded p-1 transition-colors disabled:cursor-not-allowed"
-              >
-                <svg
-                  fill="#EB2020"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  className="w-5 h-5"
-                >
-                  <path d="M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z" />
-                </svg>
-              </button>
-            </div>
-            {originSuggestions.length > 0 && debouncedStartLocation && (
-              <ul className="absolute top-full left-0 w-full bg-white border border-gray-300 rounded-md mt-1 z-50 max-h-60 overflow-y-auto">
-                {originSuggestions.map((s) => (
-                  <li
-                    key={s.osm_id}
-                    onClick={() => handleSelectSuggestion(s, 0)}
-                    className="p-2 hover:bg-gray-100 cursor-pointer"
-                  >
-                    {s.display_name}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-
-          <div className="relative w-full">
-            <label
-              htmlFor="destination"
-              className="block mb-1 text-sm font-medium text-[#4d4d4d]"
-            >
-              <div className="flex items-center gap-1">
-                Drop-off point{" "}
-                <span className="text-red-500 text-xs">(Required)</span>
-                <div className="relative group">
-                  <svg
-                    className="w-4 cursor-pointer"
-                    fill="#4d4d4d"
-                    xmlns="http://www.w3.org/2000/svg"
-                    id="mdi-information"
-                    viewBox="0 0 24 24"
-                  >
-                    <path d="M13,9H11V7H13M13,17H11V11H13M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z" />
-                  </svg>
-
-                  <div className="absolute -top-8 left-1/2 -translate-x-1/2 mt-2 w-max max-w-xs px-2 py-1 text-xs text-white bg-gray-800 rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-50">
-                    You may pin a location if the field is empty.
-                  </div>
-                </div>
-              </div>
-            </label>
-
-            <div className="relative flex items-center w-full">
-              <input
-                id="destination"
-                type="text"
-                value={endLocation}
-                onChange={(e) => handleChangeInput(e, 1)}
-                className="p-2 pr-16 text-[15px] text-[#4d4d4d] border border-[#4d4d4d] rounded-md w-full"
-              />
-
-              <button
-                type="button"
-                onClick={() => handleUserCurrentLocation(1)}
-                className="absolute right-8 top-1/2 -translate-y-1/2 cursor-pointer hover:bg-blue-50 rounded p-1 transition-colors"
-                title="Use current location"
-              >
-                <svg
-                  fill="#2196F3"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  className="w-5 h-5"
-                >
-                  <path d="M12,8A4,4 0 0,1 16,12A4,4 0 0,1 12,16A4,4 0 0,1 8,12A4,4 0 0,1 12,8M3.05,13H1V11H3.05C3.5,6.83 6.83,3.5 11,3.05V1H13V3.05C17.17,3.5 20.5,6.83 20.95,11H23V13H20.95C20.5,17.17 17.17,20.5 13,20.95V23H11V20.95C6.83,20.5 3.5,17.17 3.05,13M12,5A7,7 0 0,0 5,12A7,7 0 0,0 12,19A7,7 0 0,0 19,12A7,7 0 0,0 12,5Z" />
-                </svg>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleDeletePoint(1)}
-                disabled={markers[1] === null}
-                title="Remove destination"
-                className="absolute right-1 top-1/2 -translate-y-1/2 cursor-pointer enabled:hover:bg-red-50 rounded p-1 transition-colors disabled:cursor-not-allowed"
-              >
-                <svg
-                  fill="#EB2020"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  className="w-5 h-5"
-                >
-                  <path d="M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z" />
-                </svg>
-              </button>
-            </div>
-            {destinationSuggestions.length > 0 && debouncedEndLocation && (
-              <ul className="absolute top-full left-0 w-full bg-white border border-gray-300 rounded-md mt-1 z-50 max-h-60 overflow-y-auto">
-                {destinationSuggestions.map((s) => (
-                  <li
-                    key={s.osm_id}
-                    onClick={() => handleSelectSuggestion(s, 1)}
-                    className="p-2 hover:bg-gray-100 cursor-pointer"
-                  >
-                    {s.display_name}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-
-          <div className="flex flex-col items-start gap-1">
-            <label
-              htmlFor="vehicle_type"
-              className="text-sm font-medium text-[#4d4d4d]"
-            >
-              Vehicle Type{" "}
-              <span className="text-red-500 text-xs">(Required)</span>
-            </label>
-            <select
-              id="vehicle_type"
-              value={vehicleType}
-              onChange={(e) => setVehicleType(e.target.value)}
-              className="p-2 text-[15px] text-[#4d4d4d] border border-[#4d4d4d] rounded-md w-full"
-            >
-              <option value="" defaultValue={""} disabled></option>
-              <option value="traditional_jeepney">Traditional Jeepney</option>
-              <option value="e_jeepney">Electric Jeepney</option>
-              <option value="uv_express">UV Express</option>
-              <option value="taxi">Taxi</option>
-              <option value="ordinary_city_bus">Ordinary City Bus</option>
-              <option value="aircon_city_bus">Airconditioned City Bus</option>
-              <option value="ordinary_prov_bus">Ordinary Provincial Bus</option>
-              <option value="aircon_prov_bus">
-                Airconditioned Provincial Bus
-              </option>
-              <option value="tricycle" disabled>
-                Tricycle (fares vary per TODA)
-              </option>
-            </select>
-          </div>
-
-          <div className="flex flex-col items-start gap-1">
-            <label
-              htmlFor="passenger_type"
-              className="text-sm font-medium text-[#4d4d4d]"
-            >
-              Passenger Type{" "}
-              <span className="text-red-500 text-xs">(Required)</span>
-            </label>
-            <select
-              id="passenger_type"
-              value={passengerType}
-              onChange={(e) => setPassengerType(e.target.value)}
-              className="p-2 text-[15px] text-[#4d4d4d] border border-[#4d4d4d] rounded-md w-full"
-            >
-              <option value="" defaultChecked={""} disabled></option>
-              <option value="regular">Regular</option>
-              <option value="student">Student</option>
-              <option value="pwd">Person With Disability</option>
-              <option value="senior_citizen">Senior Citizen</option>
-            </select>
-          </div>
-
-          <button
-            className="bg-[#4CAF4F] p-2 rounded-md text-white text-sm enabled:cursor-pointer enabled:hover:bg-[#4CAF4F]/90 mt-2 w-full disabled:hover:cursor-not-allowed"
-            disabled={
-              startLocation.trim() === "" ||
-              endLocation.trim() === "" ||
-              passengerType === "" ||
-              vehicleType === ""
-            }
-            onClick={fetchRoute}
-          >
-            Calculate Fare
-          </button>
-
-          <button
-            className="bg-red-500 p-2 rounded-md text-white text-sm enabled:cursor-pointer enabled:hover:bg-red-500/90 w-full disabled:hover:cursor-not-allowed"
-            disabled={
-              startLocation.trim() === "" &&
-              endLocation.trim() === "" &&
-              passengerType === "" &&
-              vehicleType === ""
-            }
-            onClick={handleClearAll}
-          >
-            Clear All
-          </button>
-        </form>
+        <InputForm startLocation={startLocation} handleChangeInput={handleChangeInput} handleUserCurrentLocation={handleUserCurrentLocation} handleDeletePoint={handleDeletePoint} markers={markers} originSuggestions={originSuggestions} debouncedStartLocation={debouncedStartLocation} handleSelectSuggestion={handleSelectSuggestion} endLocation={endLocation} destinationSuggestions={destinationSuggestions} debouncedEndLocation={debouncedEndLocation} vehicleType={vehicleType} setVehicleType={setVehicleType} passengerType={passengerType} setPassengerType={setPassengerType} fetchRoute={fetchRoute} handleClearAll={handleClearAll} />
         {route.length > 0 && (
           <>
-            <hr className="mb-3 mx-4 border-slate-400" /> 
-            <div className="m-4 p-4 rounded bg-[#4CAF4F] text-white text-sm">
-            Results: 
-            {distance && <p className="mt-2">Distance: {distance} km</p>}
-            {currentLoc && (
-              <p className="mt-2">
-                You are currently at:{" "}
-                {currentLoc?.latitude + ", " + currentLoc?.longitude}
-              </p>
-            )}
-            {error && <span className="text-center text-red-500 text-sm">{error}</span>}
+            <hr className="mb-6 mx-4 border-slate-300" />
+
+            <div className="m-4 space-y-4">
+              {/* Results Header */}
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-8 h-8 bg-gradient-to-r from-green-500 to-green-600 rounded-full flex items-center justify-center">
+                  <svg
+                    className="w-4 h-4 text-white"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                    />
+                  </svg>
+                </div>
+                <h3 className="text-lg font-semibold text-gray-800">
+                  Route Results
+                </h3>
+              </div>
+
+              {/* Main Results Cards */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Distance Card */}
+                {distance && (
+                  <div className="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
+                        <svg
+                          className="w-5 h-5 text-white"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+                          />
+                        </svg>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-blue-600">
+                          Total Distance
+                        </p>
+                        <p className="text-2xl font-bold text-blue-800">
+                          {distance} km
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Duration Card */}
+                {distance && (
+                  <div className="bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-purple-500 rounded-lg flex items-center justify-center">
+                        <svg
+                          className="w-5 h-5 text-white"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                          />
+                        </svg>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-purple-600">
+                          Estimated Time
+                        </p>
+                        <p className="text-2xl font-bold text-purple-800">
+                          {Math.round((parseFloat(distance) / 40) * 60)} min
+                        </p>
+                        <p className="text-xs text-purple-500">@ 40 km/h avg</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Current Location Card */}
+              {currentLoc && (
+                <div className="bg-gradient-to-br from-green-50 to-green-100 border border-green-200 rounded-xl p-4 shadow-sm">
+                  <div className="flex items-start gap-3">
+                    <div className="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center mt-0.5">
+                      <svg
+                        className="w-5 h-5 text-white"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                        />
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                        />
+                      </svg>
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-green-600 mb-1">
+                        Your Current Location
+                      </p>
+                      <p className="text-sm text-green-700 bg-green-50 px-3 py-2 rounded-lg border border-green-200 font-mono">
+                        {currentLoc.latitude.toFixed(6)},{" "}
+                        {currentLoc.longitude.toFixed(6)}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Error Message */}
+              {error && (
+                <div className="bg-gradient-to-br from-red-50 to-red-100 border border-red-200 rounded-xl p-4 shadow-sm">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-red-500 rounded-lg flex items-center justify-center">
+                      <svg
+                        className="w-5 h-5 text-white"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16c-.77.833.192 2.5 1.732 2.5z"
+                        />
+                      </svg>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-red-600">Error</p>
+                      <p className="text-sm text-red-700">{error}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Route Summary */}
+              <div className="bg-gradient-to-br from-gray-50 to-gray-100 border border-gray-200 rounded-xl p-4 shadow-sm">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-8 h-8 bg-gray-500 rounded-lg flex items-center justify-center">
+                    <svg
+                      className="w-4 h-4 text-white"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                      />
+                    </svg>
+                  </div>
+                  <p className="text-sm font-medium text-gray-600">
+                    Route Summary
+                  </p>
+                </div>
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">Waypoints:</span>
+                    <span className="font-medium text-gray-700">
+                      {route.length}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">Status:</span>
+                    <span className="font-medium text-green-600">Active</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </>
         )}
