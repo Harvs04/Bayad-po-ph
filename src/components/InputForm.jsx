@@ -278,27 +278,27 @@ const InputForm = ({
             <option value="" disabled>
               Choose vehicle type
             </option>
-            <option value="traditional_jeepney">🚐 Traditional Jeepney</option>
-            <option value="aircon_e_jeepney">⚡Airconditioned E-Jeepney</option>
-            <option value="non_aircon_e_jeepney">
+            <option value="Traditional_Jeepney">🚐 Traditional Jeepney</option>
+            <option value="Airconditioned_E-Jeepney">⚡Airconditioned E-Jeepney</option>
+            <option value="Non-Airconditioned_E-Jeepney">
               ⚡Non-Airconditioned E-Jeepney
             </option>
-            <option value="uv_express">🚐 UV Express</option>
-            <option value="taxi">🚕 Taxi</option>
-            <option value="ordinary_city_bus">🚌 Ordinary City Bus</option>
-            <option value="aircon_city_bus">🚌 Airconditioned City Bus</option>
-            <option value="ordinary_prov_bus">
+            <option value="UV_Express">🚐 UV Express</option>
+            <option value="Taxi">🚕 Taxi</option>
+            <option value="Ordinary_City_Bus">🚌 Ordinary City Bus</option>
+            <option value="Airconditioned_City_Bus">🚌 Airconditioned City Bus</option>
+            <option value="Ordinary_Provincial_Bus">
               🚌 Ordinary Provincial Bus
             </option>
-            <option value="aircon_prov_bus">
+            <option value="Airconditioned_Provincial_Bus">
               🚌 Airconditioned Provincial Bus
             </option>
-            <option value="deluxe_prov_bus">🚌 Deluxe Provincial Bus</option>
-            <option value="super_deluxe_prov_bus">
+            <option value="Deluxe_Provincial_Bus">🚌 Deluxe Provincial Bus</option>
+            <option value="Super_Deluxe_Provincial_Bus">
               🚌 Super Deluxe Provincial Bus
             </option>
-            <option value="luxury_prov_bus">🚌 Luxury Provincial Bus</option>
-            <option value="tricycle" disabled>
+            <option value="Luxury_Provincial_Bus">🚌 Luxury Provincial Bus</option>
+            <option value="Tricycle" disabled>
               🛵 Tricycle (fares vary per TODA)
             </option>
           </select>
