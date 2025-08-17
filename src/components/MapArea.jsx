@@ -71,7 +71,6 @@ const MapArea = ({
     useEffect(() => {
       if (isSubmitted && markers[0] && markers[1]) {
         const bounds = [markers[0], markers[1]];
-        console.log('distance < 10? ' + (distance < 10));
         map.flyToBounds(bounds, {
           padding: distance < 10 ? [150, 150] : [80, 80],
           duration: 1.2,
