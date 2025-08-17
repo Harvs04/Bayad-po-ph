@@ -32,7 +32,7 @@ const InputForm = ({ startLocation, handleChangeInput, handleUserCurrentLocation
           <div className="relative space-y-2">
             <label
               htmlFor="source"
-              className="block text-sm font-semibold text-gray-700"
+              className="block text-sm font-semibold text-gray-700 w-fit"
             >
               <div className="flex items-center gap-2">
                 <div className="w-3 h-3 bg-green-500 rounded-full"></div>
@@ -135,7 +135,7 @@ const InputForm = ({ startLocation, handleChangeInput, handleUserCurrentLocation
           <div className="relative space-y-2">
             <label
               htmlFor="destination"
-              className="block text-sm font-semibold text-gray-700"
+              className="block text-sm font-semibold text-gray-700 w-fit"
             >
               <div className="flex items-center gap-2">
                 <div className="w-3 h-3 bg-red-500 rounded-full"></div>
