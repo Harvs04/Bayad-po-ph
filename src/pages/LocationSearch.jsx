@@ -34,7 +34,9 @@ const LocationSearch = () => {
     false,
   ]);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [fare, setFare] = useState(0);
 
+  // input field functions
   const handleChangeInput = (e, index) => {
     const value = e.target.value;
     if (index === 0) {
@@ -47,6 +49,40 @@ const LocationSearch = () => {
         setEndLocation(value);
         setIsDestinationSuggestionSelected(false);
       }
+    }
+  };
+
+  const handleSelectSuggestion = (place, index) => {
+    setMarkers((prevMarkers) => {
+      const updated = [...prevMarkers];
+      updated[index] = [place.lat, place.lon];
+      return updated;
+    });
+    if (index === 0) {
+      setStartLocation(place.display_name);
+      setOriginSuggestions([]);
+      setIsOriginSuggestionSelected(true);
+    } else if (index === 1) {
+      setEndLocation(place.display_name);
+      setDestinationSuggestions([]);
+      setIsDestinationSuggestionSelected(true);
+    }
+  };
+
+  const handleDeletePoint = (index) => {
+    setRoute([]);
+    setDuration(0);
+    setDistance(null);
+    setIsSubmitted(false);
+
+    if (index === 0) {
+      setStartLocation("");
+      setMarkers((prev) => [null, prev[1]]);
+      setIsOriginPinned(false);
+    } else if (index === 1) {
+      setEndLocation("");
+      setMarkers((prev) => [prev[0], null]);
+      setIsDestinationPinned(false);
     }
   };
 
@@ -91,6 +127,87 @@ const LocationSearch = () => {
     setIsSubmitted(false);
   };
 
+  const calculateFare = (distance, duration, vehicleType, passengerType) => {
+    if (!distance || !vehicleType) return 0;
+    let multiplier = passengerType === "regular" ? 1 : 0.8;
+    let baseFare = 0;
+    let baseKm = 0;
+    let perKmRate = 0;
+    let farePerMinute = 2;
+
+    switch (vehicleType) {
+      case "traditional_jeepney":
+        baseFare = 13;
+        baseKm = 4;
+        perKmRate = 1.80;
+        break;
+      case "aircon_e_jeepney":
+        baseFare = 15;
+        baseKm = 4;
+        perKmRate = 1.80;
+        break;
+      case "non_aircon_e_jeepney":
+        baseFare = 15;
+        baseKm = 4;
+        perKmRate = 2.20;
+        break;
+      case "uv_express":
+        baseFare = 15;
+        baseKm = 4;
+        perKmRate = 2.50;
+        break;
+      case "taxi":
+        baseFare = 50;
+        perKmRate = 13.50;
+        break;
+      case "ordinary_city_bus":
+        baseFare = 13;
+        baseKm = 5;
+        perKmRate = 2.25;
+        break;
+      case "aircon_city_bus":
+        baseFare = 15;
+        baseKm = 5;
+        perKmRate = 2.65;
+        break;
+      case "ordinary_prov_bus":
+        baseFare = 11;
+        baseKm = 5;
+        perKmRate = 1.90;
+        break;
+      case "aircon_prov_bus":
+        baseFare = 10.50;
+        baseKm = 5;
+        perKmRate = 2.10;
+        break;
+      case "deluxe_prov_bus":
+        baseFare = 11.25;
+        baseKm = 5;
+        perKmRate = 2.25;
+        break;
+      case "super_deluxe_prov_bus":
+        baseFare = 11.75;
+        baseKm = 5;
+        perKmRate = 2.35;
+        break;
+      case "luxury_prov_bus":
+        baseFare = 14.50;
+        baseKm = 5;
+        perKmRate = 2.90;
+        break;
+      default:
+        return 0;
+    }
+
+    if (vehicleType === "taxi") {
+      return (baseFare + (perKmRate * Math.round(distance)) + (farePerMinute * (duration / 60))) * multiplier;
+    }
+
+    return Math.round(distance) < baseKm ? baseFare : (baseFare + perKmRate * (Math.round(distance) - baseKm)) * multiplier;
+  }
+
+
+  // fetching locations and routes 
   const reverseGeocoding = async (index, lat, long) => {
     const endpoint = `https://api.locationiq.com/v1/reverse?key=${apiKey}&lat=${lat}&lon=${long}&format=json`;
     try {
@@ -127,6 +244,8 @@ const LocationSearch = () => {
           setRoute(coords);
           setDuration(data.routes[0].duration);
           setDistance((data.routes[0].distance / 1000).toFixed(2));
+          // setFare(calculateFare(data.routes[0].distance / 1000, data.routes[0].duration, vehicleType, passengerType));
+          console.log("Fare: ", calculateFare(data.routes[0].distance / 1000, data.routes[0].duration, vehicleType, passengerType));
         }
       } catch (err) {
         console.error("Error fetching route:", err);
@@ -134,39 +253,6 @@ const LocationSearch = () => {
     }
   };
 
-  const handleSelectSuggestion = (place, index) => {
-    setMarkers((prevMarkers) => {
-      const updated = [...prevMarkers];
-      updated[index] = [place.lat, place.lon];
-      return updated;
-    });
-    if (index === 0) {
-      setStartLocation(place.display_name);
-      setOriginSuggestions([]);
-      setIsOriginSuggestionSelected(true);
-    } else if (index === 1) {
-      setEndLocation(place.display_name);
-      setDestinationSuggestions([]);
-      setIsDestinationSuggestionSelected(true);
-    }
-  };
-
-  const handleDeletePoint = (index) => {
-    setRoute([]);
-    setDuration(0);
-    setDistance(null);
-    setIsSubmitted(false);
-
-    if (index === 0) {
-      setStartLocation("");
-      setMarkers((prev) => [null, prev[1]]);
-      setIsOriginPinned(false);
-    } else if (index === 1) {
-      setEndLocation("");
-      setMarkers((prev) => [prev[0], null]);
-      setIsDestinationPinned(false);
-    }
-  };
 
   useDebounce(() => setDebouncedStartLocation(startLocation), 500, [
     startLocation,
@@ -264,7 +350,25 @@ const LocationSearch = () => {
       </div>
 
       <section className="absolute bottom-0 right-4 md:top-4 z-[9999] bg-[#fbfdfb] rounded-lg shadow-sm pointer-events-auto max-w-sm h-fit">
-        <InputForm startLocation={startLocation} handleChangeInput={handleChangeInput} handleUserCurrentLocation={handleUserCurrentLocation} handleDeletePoint={handleDeletePoint} markers={markers} originSuggestions={originSuggestions} debouncedStartLocation={debouncedStartLocation} handleSelectSuggestion={handleSelectSuggestion} endLocation={endLocation} destinationSuggestions={destinationSuggestions} debouncedEndLocation={debouncedEndLocation} vehicleType={vehicleType} setVehicleType={setVehicleType} passengerType={passengerType} setPassengerType={setPassengerType} fetchRoute={fetchRoute} handleClearAll={handleClearAll} />
+        <InputForm
+          startLocation={startLocation}
+          handleChangeInput={handleChangeInput}
+          handleUserCurrentLocation={handleUserCurrentLocation}
+          handleDeletePoint={handleDeletePoint}
+          markers={markers}
+          originSuggestions={originSuggestions}
+          debouncedStartLocation={debouncedStartLocation}
+          handleSelectSuggestion={handleSelectSuggestion}
+          endLocation={endLocation}
+          destinationSuggestions={destinationSuggestions}
+          debouncedEndLocation={debouncedEndLocation}
+          vehicleType={vehicleType}
+          setVehicleType={setVehicleType}
+          passengerType={passengerType}
+          setPassengerType={setPassengerType}
+          fetchRoute={fetchRoute}
+          handleClearAll={handleClearAll}
+        />
         {route.length > 0 && (
           <>
             <hr className="mb-6 mx-4 border-slate-300" />
