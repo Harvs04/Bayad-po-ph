@@ -5,6 +5,8 @@ import { useDebounce } from "react-use";
 import MapArea from "../components/MapArea";
 import InputForm from "../components/InputForm";
 import FareResult from "../components/FareResult";
+import { motion, AnimatePresence } from "framer-motion";
+import Spinner from "../components/Spinner";
 
 const LocationSearch = () => {
   const apiKey = import.meta.env.VITE_LOCATION_IQ_PUBLIC_TOKEN;
@@ -36,6 +38,7 @@ const LocationSearch = () => {
   ]);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [fareDetails, setFareDetails] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
 
   // input field functions
   const handleChangeInput = (e, index) => {
@@ -136,7 +139,7 @@ const LocationSearch = () => {
     let baseFare = 0;
     let baseKm = 0;
     let perKmRate = 0;
-    let farePerMinute = vehicleType === 'Taxi' ? 2 : 0;
+    let farePerMinute = vehicleType === "Taxi" ? 2 : 0;
     let distanceFare = 0;
     let totalFare = 0;
 
@@ -144,26 +147,26 @@ const LocationSearch = () => {
       case "Traditional_Jeepney":
         baseFare = 13;
         baseKm = 4;
-        perKmRate = 1.80;
+        perKmRate = 1.8;
         break;
       case "Airconditioned_E-Jeepney":
         baseFare = 15;
         baseKm = 4;
-        perKmRate = 1.80;
+        perKmRate = 1.8;
         break;
       case "Non-Airconditioned_E-Jeepney":
         baseFare = 15;
         baseKm = 4;
-        perKmRate = 2.20;
+        perKmRate = 2.2;
         break;
       case "UV_Express":
         baseFare = 15;
         baseKm = 4;
-        perKmRate = 2.50;
+        perKmRate = 2.5;
         break;
       case "Taxi":
         baseFare = 50;
-        perKmRate = 13.50;
+        perKmRate = 13.5;
         break;
       case "Ordinary_City_Bus":
         baseFare = 13;
@@ -178,12 +181,12 @@ const LocationSearch = () => {
       case "Ordinary_Provincial_Bus":
         baseFare = 11;
         baseKm = 5;
-        perKmRate = 1.90;
+        perKmRate = 1.9;
         break;
       case "Airconditioned_Provincial_Bus":
-        baseFare = 10.50;
+        baseFare = 10.5;
         baseKm = 5;
-        perKmRate = 2.10;
+        perKmRate = 2.1;
         break;
       case "Deluxe_Provincial_Bus":
         baseFare = 11.25;
@@ -196,38 +199,48 @@ const LocationSearch = () => {
         perKmRate = 2.35;
         break;
       case "Luxury_Provincial_Bus":
-        baseFare = 14.50;
+        baseFare = 14.5;
         baseKm = 5;
-        perKmRate = 2.90;
+        perKmRate = 2.9;
         break;
       default:
         return 0;
     }
 
-    distanceFare = Math.round(distance) < baseKm ? 0 : vehicleType === "Taxi" ? (perKmRate * Math.round(distance)) : perKmRate * (Math.round(distance) - baseKm);
+    distanceFare =
+      Math.round(distance) < baseKm
+        ? 0
+        : vehicleType === "Taxi"
+        ? perKmRate * Math.round(distance)
+        : perKmRate * (Math.round(distance) - baseKm);
     if (vehicleType === "taxi") {
-      totalFare = (baseFare + distanceFare + (farePerMinute * (duration / 60))) * multiplier;
-    } else {  
-      totalFare = Math.round(distance) < baseKm ? (baseFare * multiplier) : (baseFare + distanceFare) * multiplier;
+      totalFare =
+        (baseFare + distanceFare + farePerMinute * (duration / 60)) *
+        multiplier;
+    } else {
+      totalFare =
+        Math.round(distance) < baseKm
+          ? baseFare * multiplier
+          : (baseFare + distanceFare) * multiplier;
     }
 
     return {
-      "baseFare": baseFare,
-      "baseKm": baseKm,
-      "distance": distance,
-      "duration": duration,
-      "vehicleType": vehicleType,
-      "passengerType": passengerType,
-      "distanceFare": distanceFare,
-      "totalFare": totalFare
-    }
-  }
+      baseFare: baseFare,
+      baseKm: baseKm,
+      distance: distance,
+      duration: duration,
+      vehicleType: vehicleType,
+      passengerType: passengerType,
+      distanceFare: distanceFare,
+      totalFare: totalFare,
+    };
+  };
 
-
-  // fetching locations and routes 
+  // fetching locations and routes
   const reverseGeocoding = async (index, lat, long) => {
     const endpoint = `https://api.locationiq.com/v1/reverse?key=${apiKey}&lat=${lat}&lon=${long}&format=json`;
     try {
+      setIsLoading(true);
       const response = await fetch(endpoint);
       if (!response.ok) throw new Error("Network response was not ok");
       const data = await response.json();
@@ -239,11 +252,14 @@ const LocationSearch = () => {
     } catch (error) {
       console.error("Error fetching reverse geocoding: ", error);
       return "";
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const fetchRoute = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
     setIsSubmitted(true);
     if (markers.length === 2) {
       const [start, end] = markers;
@@ -252,7 +268,6 @@ const LocationSearch = () => {
       try {
         const res = await fetch(url);
         const data = await res.json();
-        console.log(data);
 
         if (data.routes && data.routes.length > 0) {
           const encoded = data.routes[0].geometry;
@@ -261,14 +276,22 @@ const LocationSearch = () => {
           setRoute(coords);
           setDuration(data.routes[0].duration);
           setDistance((data.routes[0].distance / 1000).toFixed(2));
-          setFareDetails(calculateFare(data.routes[0].distance / 1000, data.routes[0].duration, vehicleType, passengerType));
+          setFareDetails(
+            calculateFare(
+              data.routes[0].distance / 1000,
+              data.routes[0].duration,
+              vehicleType,
+              passengerType
+            )
+          );
         }
       } catch (err) {
         console.error("Error fetching route:", err);
+      } finally {
+        setIsLoading(false);
       }
     }
   };
-
 
   useDebounce(() => setDebouncedStartLocation(startLocation), 500, [
     startLocation,
@@ -365,30 +388,70 @@ const LocationSearch = () => {
         />
       </div>
 
-      <section className="absolute bottom-0 right-4 md:top-4 z-[9999] bg-[#fbfdfb] rounded-lg shadow-sm pointer-events-auto max-w-sm h-fit">
-        <InputForm
-          startLocation={startLocation}
-          handleChangeInput={handleChangeInput}
-          handleUserCurrentLocation={handleUserCurrentLocation}
-          handleDeletePoint={handleDeletePoint}
-          markers={markers}
-          originSuggestions={originSuggestions}
-          debouncedStartLocation={debouncedStartLocation}
-          handleSelectSuggestion={handleSelectSuggestion}
-          endLocation={endLocation}
-          destinationSuggestions={destinationSuggestions}
-          debouncedEndLocation={debouncedEndLocation}
-          vehicleType={vehicleType}
-          setVehicleType={setVehicleType}
-          passengerType={passengerType}
-          setPassengerType={setPassengerType}
-          fetchRoute={fetchRoute}
-          handleClearAll={handleClearAll}
-        />
-        {isSubmitted && route.length > 0 && fareDetails !== undefined ? (
-          <FareResult fareDetails={fareDetails} startLocation={startLocation} endLocation={endLocation} error={error} />
-          ) : null
-        }
+      <section className="absolute bottom-0 right-4 md:top-4 z-[9999] bg-[#fbfdfb] rounded-lg shadow-sm pointer-events-auto max-w-sm h-fit overflow-hidden">
+        <AnimatePresence initial={false} mode="wait">
+          {!isSubmitted ? (
+            <motion.div
+              key="input"
+              initial={{ x: "-100%", opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: "100%", opacity: 0 }}
+              transition={{ duration: 0.4, ease: "easeInOut" }}
+              className="w-full"
+            >
+              <InputForm
+                startLocation={startLocation}
+                handleChangeInput={handleChangeInput}
+                handleUserCurrentLocation={handleUserCurrentLocation}
+                handleDeletePoint={handleDeletePoint}
+                markers={markers}
+                originSuggestions={originSuggestions}
+                debouncedStartLocation={debouncedStartLocation}
+                handleSelectSuggestion={handleSelectSuggestion}
+                endLocation={endLocation}
+                destinationSuggestions={destinationSuggestions}
+                debouncedEndLocation={debouncedEndLocation}
+                vehicleType={vehicleType}
+                setVehicleType={setVehicleType}
+                passengerType={passengerType}
+                setPassengerType={setPassengerType}
+                fetchRoute={fetchRoute}
+                handleClearAll={handleClearAll}
+              />
+            </motion.div>
+          ) : isLoading ? (
+            <motion.div
+              key="loading"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className="w-full flex items-center justify-center py-12"
+            >
+              <Spinner />
+            </motion.div>
+          ) : (
+            route.length > 0 &&
+            fareDetails && (
+              <motion.div
+                key="fare"
+                initial={{ x: "100%", opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                exit={{ x: "-100%", opacity: 0 }}
+                transition={{ duration: 0.4, ease: "easeInOut" }}
+                className="w-full"
+              >
+                <FareResult
+                  fareDetails={fareDetails}
+                  startLocation={startLocation}
+                  endLocation={endLocation}
+                  setIsSubmitted={setIsSubmitted}
+                  error={error}
+                />
+              </motion.div>
+            )
+          )}
+        </AnimatePresence>
       </section>
     </div>
   );
