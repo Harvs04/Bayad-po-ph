@@ -24,7 +24,7 @@ function Landing() {
           />
         </div>
       </header>
-      <section className="px-10 py-8 bg-[#4CAF4F] w-full flex flex-col items-center justify-center gap-4">
+      <section className="px-10 py-14 bg-[#4CAF4F] w-full flex flex-col items-center justify-center gap-4">
         <h1 className="text-center text-white text-3xl md:text-4xl font-semibold">
           Where are you headed, ka-byahe?
         </h1>
@@ -94,7 +94,7 @@ function Landing() {
           </Link>
         </form>
       </section>
-      <section className="flex flex-col md:flex-row items-center justify-center bg-[#fbfdfb] w-full py-6 md:py-10 px-2 gap-4 md:gap-10">
+      <section className="flex flex-col md:flex-row items-center justify-center bg-[#f8f8f8] w-full py-6 md:py-10 px-2 gap-4 md:gap-10">
         <div className="flex flex-col gap-4 px-2 text-center">
           <h2 className="text-3xl md:text-4xl px-10 md:px-0 font-semibold text-[#4d4d4d]">
             Plan and manage your fares ahead of time
