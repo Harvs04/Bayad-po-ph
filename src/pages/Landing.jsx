@@ -1,6 +1,11 @@
 import { useState } from "react";
 import Navbar from "./../components/Navbar";
 import { Link } from "react-router-dom";
+import JeepTricyIcon from '../assets/jeep-tricy.png';
+import CoinsIcon from '../assets/coins.png';
+import PhoneMapIcon from '../assets/phone_map.png';
+import DriverIcon from '../assets/driver.png';
+import LtfrbIcon from '../assets/LTFRB_Seal.png';
 
 function Landing() {
   return (
@@ -13,7 +18,7 @@ function Landing() {
             <span className="text-[#4CAF4F]">Anytime, Anywhere</span>
           </div>
           <img
-            src="./src/assets/jeep-tricy.png"
+            src={JeepTricyIcon}
             alt="landing illustration"
             className="w-full md:w-7/12"
           />
@@ -100,7 +105,7 @@ function Landing() {
           </p>
         </div>
         <img
-          src="./src/assets/coins.png"
+          src={CoinsIcon}
           alt="coins_asset"
           className="w-1/2 md:w-[250px]"
         />
@@ -108,7 +113,7 @@ function Landing() {
 
       <section className="flex flex-col md:flex-row items-center justify-center bg-[#f8f8f8] w-full py-6 md:py-10 px-2 gap-4 md:gap-10">
         <img
-          src="./src/assets/phone_map.png"
+          src={PhoneMapIcon}
           alt="map_asset"
           className="w-1/2 md:w-[250px]"
         />
@@ -135,7 +140,7 @@ function Landing() {
           </p>
         </div>
         <img
-          src="./src/assets/driver.png"
+          src={DriverIcon}
           alt="driver_asset"
           className="w-1/2 md:w-[250px]"
         />
@@ -144,7 +149,7 @@ function Landing() {
       <section className="flex flex-col md:flex-row items-center justify-center bg-[#f8f8f8] w-full py-6 md:py-10 px-2 gap-4 md:gap-10">
         <div className="py-8">
           <img
-            src="./src/assets/LTFRB_Seal.png"
+            src={LtfrbIcon}
             alt="ltfrb_logo_asset"
             className="w-1/2 md:w-[250px]"
           />
