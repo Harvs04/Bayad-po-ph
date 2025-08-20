@@ -35,7 +35,7 @@ const LocationSearch = () => {
     false,
   ]);
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [fare, setFare] = useState(0);
+  const [fareDetails, setFareDetails] = useState({});
 
   // input field functions
   const handleChangeInput = (e, index) => {
@@ -73,6 +73,7 @@ const LocationSearch = () => {
   const handleDeletePoint = (index) => {
     setRoute([]);
     setDuration(0);
+    setFareDetails({});
     setDistance(null);
     setIsSubmitted(false);
 
@@ -125,16 +126,19 @@ const LocationSearch = () => {
     setRoute([]);
     setDuration(0);
     setDistance(null);
+    setFareDetails({});
     setIsSubmitted(false);
   };
 
   const calculateFare = (distance, duration, vehicleType, passengerType) => {
     if (!distance || !vehicleType) return 0;
-    let multiplier = passengerType === "regular" ? 1 : 0.8;
+    let multiplier = passengerType === "Regular" ? 1 : 0.8;
     let baseFare = 0;
     let baseKm = 0;
     let perKmRate = 0;
-    let farePerMinute = 2;
+    let farePerMinute = vehicleType === 'Taxi' ? 2 : 0;
+    let distanceFare = 0;
+    let totalFare = 0;
 
     switch (vehicleType) {
       case "Traditional_Jeepney":
@@ -200,11 +204,23 @@ const LocationSearch = () => {
         return 0;
     }
 
+    distanceFare = Math.round(distance) < baseKm ? 0 : vehicleType === "Taxi" ? (perKmRate * Math.round(distance)) : perKmRate * (Math.round(distance) - baseKm);
     if (vehicleType === "taxi") {
-      return (baseFare + (perKmRate * Math.round(distance)) + (farePerMinute * (duration / 60))) * multiplier;
+      totalFare = (baseFare + distanceFare + (farePerMinute * (duration / 60))) * multiplier;
+    } else {  
+      totalFare = Math.round(distance) < baseKm ? (baseFare * multiplier) : (baseFare + distanceFare) * multiplier;
     }
 
-    return Math.round(distance) < baseKm ? baseFare : (baseFare + perKmRate * (Math.round(distance) - baseKm)) * multiplier;
+    return {
+      "baseFare": baseFare,
+      "baseKm": baseKm,
+      "distance": distance,
+      "duration": duration,
+      "vehicleType": vehicleType,
+      "passengerType": passengerType,
+      "distanceFare": distanceFare,
+      "totalFare": totalFare
+    }
   }
 
 
@@ -245,8 +261,7 @@ const LocationSearch = () => {
           setRoute(coords);
           setDuration(data.routes[0].duration);
           setDistance((data.routes[0].distance / 1000).toFixed(2));
-          // setFare(calculateFare(data.routes[0].distance / 1000, data.routes[0].duration, vehicleType, passengerType));
-          console.log("Fare: ", calculateFare(data.routes[0].distance / 1000, data.routes[0].duration, vehicleType, passengerType));
+          setFareDetails(calculateFare(data.routes[0].distance / 1000, data.routes[0].duration, vehicleType, passengerType));
         }
       } catch (err) {
         console.error("Error fetching route:", err);
@@ -370,10 +385,10 @@ const LocationSearch = () => {
           fetchRoute={fetchRoute}
           handleClearAll={handleClearAll}
         />
-        {/* {isSubmitted && route.length > 0 && distance && duration > 0 && fare > 0 ? ( */}
-          <FareResult route={route} distance={distance} vehicleType={vehicleType} estimatedTime={duration} fare={fare} startLocation={startLocation} endLocation={endLocation} error={error} />
-          {/*) : null
-        } */}
+        {isSubmitted && route.length > 0 && fareDetails !== undefined ? (
+          <FareResult fareDetails={fareDetails} startLocation={startLocation} endLocation={endLocation} error={error} />
+          ) : null
+        }
       </section>
     </div>
   );
