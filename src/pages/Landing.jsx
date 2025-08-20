@@ -3,7 +3,6 @@ import Navbar from "./../components/Navbar";
 import { Link } from "react-router-dom";
 import JeepTricyIcon from '../assets/jeep-tricy.png';
 import CoinsIcon from '../assets/coins.png';
-import PhoneMapIcon from '../assets/phone_map.png';
 import DriverIcon from '../assets/driver.png';
 import LtfrbIcon from '../assets/LTFRB_Seal.png';
 
