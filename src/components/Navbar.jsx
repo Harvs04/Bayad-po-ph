@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import JeepneyIcon from '../assets/jeepney.svg';
 
 const Navbar = () => {
   return (
@@ -9,7 +10,7 @@ const Navbar = () => {
           className="flex items-center space-x-3 rtl:space-x-reverse"
         >
           <img
-            src="./src/assets/jeepney.svg"
+            src={JeepneyIcon}
             className="h-8 "
             alt="bayad po ph"
           />
