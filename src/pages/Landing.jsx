@@ -111,23 +111,6 @@ function Landing() {
         />
       </section>
 
-      <section className="flex flex-col md:flex-row items-center justify-center bg-[#f8f8f8] w-full py-6 md:py-10 px-2 gap-4 md:gap-10">
-        <img
-          src={PhoneMapIcon}
-          alt="map_asset"
-          className="w-1/2 md:w-[250px]"
-        />
-        <div className="flex flex-col gap-4 px-2 text-center">
-          <h2 className="text-3xl md:text-4xl px-10 md:px-0 font-semibold text-[#4d4d4d]">
-            Track vehicles in real-time
-          </h2>
-          <p className="text-lg text-gray-600 max-w-lg self-center">
-            View live locations of available rides so you can plan your commute
-            efficiently and reduce waiting time.
-          </p>
-        </div>
-      </section>
-
       <section className="flex flex-col md:flex-row items-center justify-center bg-[#fbfdfb] w-full py-6 md:py-10 px-2 gap-4 md:gap-10">
         <div className="flex flex-col gap-4 px-2 text-center">
           <h2 className="text-3xl md:text-4xl px-10 md:px-0 font-semibold text-[#4d4d4d]">
@@ -135,7 +118,7 @@ function Landing() {
           </h2>
           <p className="text-lg text-gray-600 max-w-lg self-center">
             Ensure fair pricing by paying the correct fare according to your
-            passenger category, whether regular, student, senior citizen, or
+            passenger category, whether Regular, Student, Senior Citizen, or
             PWD.
           </p>
         </div>
