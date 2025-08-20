@@ -338,10 +338,10 @@ const InputForm = ({
             <option value="" disabled>
               Choose passenger type
             </option>
-            <option value="regular">👤 Regular</option>
-            <option value="student">🎓 Student</option>
-            <option value="pwd">♿ Person With Disability</option>
-            <option value="senior_citizen">👴 Senior Citizen</option>
+            <option value="Regular">👤 Regular</option>
+            <option value="Student">🎓 Student</option>
+            <option value="PWD">♿ Person With Disability</option>
+            <option value="Senior_Citizen">👴 Senior Citizen</option>
           </select>
         </div>
       </div>
