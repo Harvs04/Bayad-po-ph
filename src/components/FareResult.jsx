@@ -35,7 +35,7 @@ const FareResult = ({ fareDetails, startLocation, endLocation, setIsSubmitted, e
   return (
     <div className="max-w-md mx-auto bg-white rounded-lg shadow-xl overflow-hidden">
       {/* Header */}
-      <div className="bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 text-white p-4">
+      <div className="bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 text-white p-6">
         <div className="flex items-center gap-3 mb-3">
           <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">
             <img src={BayadPoIcon} alt="logo" className='w-5 h-5' />
@@ -91,7 +91,7 @@ const FareResult = ({ fareDetails, startLocation, endLocation, setIsSubmitted, e
       </div>
 
       {/* Trip Details - Compact */}
-      <div className="p-4 space-y-3">
+      <div className="p-6 space-y-3">
         {/* Quick Stats - Smaller */}
         <div className="grid grid-cols-2 gap-3">
           <div className="bg-gray-50 rounded-lg p-3 text-center">
@@ -137,7 +137,7 @@ const FareResult = ({ fareDetails, startLocation, endLocation, setIsSubmitted, e
               {fareDetails.duration / 3600 < 1
                 ? (fareDetails.duration / 60).toFixed(0)
                 : (fareDetails.duration / 3600).toFixed(1)}{" "}
-              {fareDetails.duration / 3600 < 1 ? "min" : "hr"}
+              {fareDetails.duration / 3600 < 1 ? "mins" : "hr/s"}
             </p>
           </div>
         </div>
@@ -197,12 +197,13 @@ const FareResult = ({ fareDetails, startLocation, endLocation, setIsSubmitted, e
         {/* Disclaimer - Smaller */}
         <div className="bg-blue-50 rounded-md p-2">
           <p className="text-xs text-blue-600 text-center">
-            ⚠️ Estimated fare may vary based on traffic conditions
+            ⚠️ Estimated fare and travel time may vary based on traffic conditions!
           </p>
         </div>
 
-        {/* Back to Map */}
-        <button className="bg-blue-600 hover:bg-blue-700 rounded-md p-2.5 w-full cursor-pointer" onClick={() => setIsSubmitted(false)}>
+        {/* Re-calculate */}
+        <button className="flex items-center justify-center gap-1.5 bg-blue-600 hover:bg-blue-700 rounded-md py-3 px-6 w-full cursor-pointer" onClick={() => setIsSubmitted(false)}>
+          <svg className='w-5 h-5 flex-shrink-0' fill="#FFFFFF" xmlns="http://www.w3.org/2000/svg" id="mdi-calculator" viewBox="0 0 24 24"><path d="M7,2H17A2,2 0 0,1 19,4V20A2,2 0 0,1 17,22H7A2,2 0 0,1 5,20V4A2,2 0 0,1 7,2M7,4V8H17V4H7M7,10V12H9V10H7M11,10V12H13V10H11M15,10V12H17V10H15M7,14V16H9V14H7M11,14V16H13V14H11M15,14V16H17V14H15M7,18V20H9V18H7M11,18V20H13V18H11M15,18V20H17V18H15Z" /></svg>
           <p className="text-[15px] text-blue-50 font-medium text-center">
             Re-Calculate
           </p>

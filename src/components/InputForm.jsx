@@ -91,7 +91,7 @@ const InputForm = ({
               fill="#2196F3"
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
-              className="w-5 h-5 enabled:group-hover:scale-110 transition-transform"
+              className="w-5 h-5 transition-transform"
             >
               <path d="M12,8A4,4 0 0,1 16,12A4,4 0 0,1 12,16A4,4 0 0,1 8,12A4,4 0 0,1 12,8M3.05,13H1V11H3.05C3.5,6.83 6.83,3.5 11,3.05V1H13V3.05C17.17,3.5 20.5,6.83 20.95,11H23V13H20.95C20.5,17.17 17.17,20.5 13,20.95V23H11V20.95C6.83,20.5 3.5,17.17 3.05,13M12,5A7,7 0 0,0 5,12A7,7 0 0,0 12,19A7,7 0 0,0 19,12A7,7 0 0,0 12,5Z" />
             </svg>
@@ -108,7 +108,7 @@ const InputForm = ({
               fill="#ef4444"
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
-              className="w-5 h-5 enabled:group-hover:scale-110 transition-transform"
+              className="w-5 h-5"
             >
               <path d="M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z" />
             </svg>
@@ -192,7 +192,7 @@ const InputForm = ({
               fill="#2196F3"
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
-              className="w-5 h-5 enabled:group-hover:scale-110 transition-transform"
+              className="w-5 h-5"
             >
               <path d="M12,8A4,4 0 0,1 16,12A4,4 0 0,1 12,16A4,4 0 0,1 8,12A4,4 0 0,1 12,8M3.05,13H1V11H3.05C3.5,6.83 6.83,3.5 11,3.05V1H13V3.05C17.17,3.5 20.5,6.83 20.95,11H23V13H20.95C20.5,17.17 17.17,20.5 13,20.95V23H11V20.95C6.83,20.5 3.5,17.17 3.05,13M12,5A7,7 0 0,0 5,12A7,7 0 0,0 12,19A7,7 0 0,0 19,12A7,7 0 0,0 12,5Z" />
             </svg>
@@ -209,7 +209,7 @@ const InputForm = ({
               fill="#ef4444"
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
-              className="w-5 h-5 enabled:group-hover:scale-110 transition-transform"
+              className="w-5 h-5"
             >
               <path d="M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z" />
             </svg>
@@ -349,7 +349,7 @@ const InputForm = ({
       {/* Action Buttons */}
       <div className="space-y-3">
         <button
-          className="w-full bg-gradient-to-r from-green-500 to-green-600 enabled:hover:from-green-600 enabled:hover:to-green-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:shadow-lg transform enabled:hover:scale-[1.02] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2"
+          className="w-full bg-green-600 enabled:hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-md shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           disabled={
             startLocation.trim() === "" ||
             endLocation.trim() === "" ||
@@ -371,11 +371,13 @@ const InputForm = ({
               d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"
             />
           </svg>
-          Calculate Fare
+          <p className="text-[15px] font-medium">
+            Calculate Fare
+          </p>
         </button>
 
         <button
-          className="w-full bg-gradient-to-r from-red-500 to-red-600 enabled:hover:from-red-600 enabled:hover:to-red-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:shadow-lg transform enabled:hover:scale-[1.02] transition-all duration-200 disabled:opacity-30 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2"
+          className="w-full bg-red-600/90 enabled:hover:bg-red-700 text-white font-semibold py-3 px-6 rounded-md shadow-md hover:shadow-lg disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           disabled={
             startLocation.trim() === "" &&
             endLocation.trim() === "" &&
@@ -397,7 +399,9 @@ const InputForm = ({
               d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
             />
           </svg>
-          Clear All
+          <p className="text-[15px] font-medium">
+            Clear All
+          </p>
         </button>
       </div>
     </form>
