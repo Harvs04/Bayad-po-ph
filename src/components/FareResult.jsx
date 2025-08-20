@@ -35,7 +35,7 @@ const FareResult = ({ fareDetails, startLocation, endLocation, setIsSubmitted, e
   return (
     <div className="max-w-md mx-auto bg-white rounded-lg shadow-xl overflow-hidden">
       {/* Header */}
-      <div className="bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 text-white p-6">
+      <div className="bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 text-white px-6 pt-6 pb-4">
         <div className="flex items-center gap-3 mb-3">
           <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">
             <img src={BayadPoIcon} alt="logo" className='w-5 h-5' />
