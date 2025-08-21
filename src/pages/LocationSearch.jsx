@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense } from "react";
 import { useEffect, useState } from "react";
 import "leaflet/dist/leaflet.css";
 import polyline from "@mapbox/polyline";
@@ -6,12 +6,12 @@ import { useDebounce } from "react-use";
 import MapArea from "../components/MapArea";
 import InputForm from "../components/InputForm";
 import { motion, AnimatePresence } from "framer-motion";
+import Spinner from "../components/Spinner";
 
 const LocationSearch = () => {
-  const Spinner = React.lazy(() => import("../components/Spinner"));
   const FareResult = React.lazy(() => import("../components/FareResult"));
-
   const apiKey = import.meta.env.VITE_LOCATION_IQ_PUBLIC_TOKEN;
+
   const [debouncedStartLocation, setDebouncedStartLocation] = useState("");
   const [startLocation, setStartLocation] = useState("");
   const [debouncedEndLocation, setDebouncedEndLocation] = useState("");
@@ -247,19 +247,21 @@ const LocationSearch = () => {
       const response = await fetch(endpoint);
       if (!response.ok) throw new Error("Network response was not ok");
       const data = await response.json();
-      if ((data.display_name).split(', ').at(-1) !== 'Philippines') {
+      if (data.display_name.split(", ").at(-1) !== "Philippines") {
         if (index === 0) {
-          setMarkers(prev => [null, prev[1]]);
+          setMarkers((prev) => [null, prev[1]]);
           setIsOriginPinned(false);
-          setStartLocation('');
+          setStartLocation("");
         } else if (index === 1) {
-          setMarkers(prev => [prev[0], null]);
+          setMarkers((prev) => [prev[0], null]);
           setIsDestinationPinned(false);
-          setEndLocation('');
+          setEndLocation("");
         }
         return;
       }
-      index === 0 ? setStartLocation(data.display_name) : setEndLocation(data.display_name);
+      index === 0
+        ? setStartLocation(data.display_name)
+        : setEndLocation(data.display_name);
     } catch (error) {
       console.error("Error fetching reverse geocoding: ", error);
       if (index === 0) {
@@ -282,7 +284,7 @@ const LocationSearch = () => {
   const fetchRoute = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    setIsSubmitted(true);
+
     if (markers.length === 2) {
       const [start, end] = markers;
       const url = `https://us1.locationiq.com/v1/directions/driving/${start[1]},${start[0]};${end[1]},${end[0]}?key=${apiKey}&overview=simplified&annotations=false`;
@@ -306,12 +308,15 @@ const LocationSearch = () => {
               passengerType
             )
           );
+          setIsSubmitted(true);
         }
       } catch (err) {
         console.error("Error fetching route:", err);
       } finally {
         setIsLoading(false);
       }
+    } else {
+      setIsLoading(false);
     }
   };
 
@@ -410,7 +415,9 @@ const LocationSearch = () => {
         />
       </div>
 
-      <section className="absolute bottom-0 right-2 md:top-2 z-[9999] bg-[#fbfdfb] rounded-md shadow-xl pointer-events-auto max-w-sm h-fit overflow-hidden">
+      <section className="absolute bottom-2 left-1/2 -translate-x-1/2 w-[95%] md:w-auto md:left-auto md:translate-x-0 md:right-2 md:top-2 max-w-sm z-[9999] bg-[#fbfdfb] rounded-md shadow-xl pointer-events-auto h-fit overflow-hidden">
+
+
         <AnimatePresence initial={false} mode="wait">
           {!isSubmitted ? (
             <motion.div
@@ -419,7 +426,7 @@ const LocationSearch = () => {
               animate={{ x: 0, opacity: 1 }}
               exit={{ x: "100%", opacity: 0 }}
               transition={{ duration: 0.4, ease: "easeInOut" }}
-              className="w-full"
+              className="w-full relative"
             >
               <InputForm
                 startLocation={startLocation}
@@ -440,29 +447,27 @@ const LocationSearch = () => {
                 fetchRoute={fetchRoute}
                 handleClearAll={handleClearAll}
               />
-            </motion.div>
-          ) : isLoading ? (
-            <motion.div
-              key="loading"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              className="w-full flex items-center justify-center py-12"
-            >
-              <Spinner />
+              {isLoading && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="absolute inset-0 flex items-center justify-center bg-white/80 z-10"
+                >
+                  <Spinner />
+                </motion.div>
+              )}
             </motion.div>
           ) : (
-            route.length > 0 &&
-            fareDetails && (
-              <motion.div
-                key="fare"
-                initial={{ x: "100%", opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                exit={{ x: "-100%", opacity: 0 }}
-                transition={{ duration: 0.4, ease: "easeInOut" }}
-                className="w-full"
-              >
+            <motion.div
+              key="fare"
+              initial={{ x: "100%", opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: "-100%", opacity: 0 }}
+              transition={{ duration: 0.4, ease: "easeInOut" }}
+              className="w-full relative"
+            >
+              <Suspense fallback={null}>
                 <FareResult
                   fareDetails={fareDetails}
                   startLocation={startLocation}
@@ -470,8 +475,8 @@ const LocationSearch = () => {
                   setIsSubmitted={setIsSubmitted}
                   error={error}
                 />
-              </motion.div>
-            )
+              </Suspense>
+            </motion.div>
           )}
         </AnimatePresence>
       </section>
