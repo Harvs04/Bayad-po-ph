@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import JeepneyIcon from '../assets/jeepney.svg';
+import JeepneyIcon from "../assets/jeepney.svg";
 
 const Navbar = () => {
   return (
@@ -9,20 +9,13 @@ const Navbar = () => {
           to={"/"}
           className="flex items-center space-x-3 rtl:space-x-reverse"
         >
-          <img
-            src={JeepneyIcon}
-            className="h-8 "
-            alt="bayad po ph"
-          />
+          <img src={JeepneyIcon} className="h-8 " alt="bayad po ph" />
           <span className="self-center text-xl font-bold whitespace-nowrap text-[#4CAF4F]">
-            Bayad po!          
+            Bayad po!
           </span>
         </Link>
         <div className="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
-          <button
-            type="button"
-            className="flex items-center justify-center gap-1 text-white bg-[#3AA640] hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-600 font-medium rounded-lg text-sm px-4 py-2 text-center "
-          >
+          <Link to={'/check-fare'} className="flex items-center justify-center gap-1 text-white bg-[#3AA640] hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-600 font-medium rounded-lg text-sm px-4 py-2 text-center ">
             <p>Get started</p>
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -38,7 +31,7 @@ const Navbar = () => {
                 d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3"
               />
             </svg>
-          </button>
+          </Link>
           <button
             data-collapse-toggle="navbar-sticky"
             type="button"
