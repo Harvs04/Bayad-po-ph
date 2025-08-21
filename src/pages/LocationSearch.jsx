@@ -7,6 +7,7 @@ import MapArea from "../components/MapArea";
 import InputForm from "../components/InputForm";
 import { motion, AnimatePresence } from "framer-motion";
 import Spinner from "../components/Spinner";
+import BayadPoIcon from '../assets/jeepney_white.svg'
 
 const LocationSearch = () => {
   const FareResult = React.lazy(() => import("../components/FareResult"));
@@ -40,6 +41,7 @@ const LocationSearch = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [fareDetails, setFareDetails] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const [isMinimized, setIsMinimized] = useState(false);
 
   // input field functions
   const handleChangeInput = (e, index) => {
@@ -108,6 +110,10 @@ const LocationSearch = () => {
     );
 
     index === 0 ? setOriginSuggestions([]) : setDestinationSuggestions([]);
+  };
+
+  const handleMinimize = () => {
+    setIsMinimized((prev) => !prev);
   };
 
   const handleClearAll = () => {
@@ -416,69 +422,113 @@ const LocationSearch = () => {
       </div>
 
       <section className="absolute bottom-2 left-1/2 -translate-x-1/2 w-[95%] md:w-auto md:left-auto md:translate-x-0 md:right-2 md:top-2 max-w-sm z-[9999] bg-[#fbfdfb] rounded-md shadow-xl pointer-events-auto h-fit overflow-hidden">
-
-
-        <AnimatePresence initial={false} mode="wait">
-          {!isSubmitted ? (
-            <motion.div
-              key="input"
-              initial={{ x: "-100%", opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              exit={{ x: "100%", opacity: 0 }}
-              transition={{ duration: 0.4, ease: "easeInOut" }}
-              className="w-full relative"
-            >
-              <InputForm
-                startLocation={startLocation}
-                handleChangeInput={handleChangeInput}
-                handleUserCurrentLocation={handleUserCurrentLocation}
-                handleDeletePoint={handleDeletePoint}
-                markers={markers}
-                originSuggestions={originSuggestions}
-                debouncedStartLocation={debouncedStartLocation}
-                handleSelectSuggestion={handleSelectSuggestion}
-                endLocation={endLocation}
-                destinationSuggestions={destinationSuggestions}
-                debouncedEndLocation={debouncedEndLocation}
-                vehicleType={vehicleType}
-                setVehicleType={setVehicleType}
-                passengerType={passengerType}
-                setPassengerType={setPassengerType}
-                fetchRoute={fetchRoute}
-                handleClearAll={handleClearAll}
-              />
-              {isLoading && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="absolute inset-0 flex items-center justify-center bg-white/80 z-10"
-                >
-                  <Spinner />
-                </motion.div>
-              )}
-            </motion.div>
-          ) : (
-            <motion.div
-              key="fare"
-              initial={{ x: "100%", opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              exit={{ x: "-100%", opacity: 0 }}
-              transition={{ duration: 0.4, ease: "easeInOut" }}
-              className="w-full relative"
-            >
-              <Suspense fallback={null}>
-                <FareResult
-                  fareDetails={fareDetails}
+        {isMinimized ? (
+          <div
+            className="p-4 cursor-pointer hover:bg-gray-50 transition-colors"
+            onClick={handleMinimize}
+          >
+            <div className="flex items-center gap-2 justify-between">
+              <span
+                className={`text-sm font-medium px-4 py-1.5 rounded-full text-white ${
+                  isSubmitted
+                    ? "bg-gradient-to-r from-blue-600 to-indigo-700"
+                    : "bg-[#4CAF4F]"
+                }`}
+              ><div className="flex items-center gap-1.5">
+                {isSubmitted ? 
+                <>
+                  <img src={BayadPoIcon} alt="logo" className='w-4 h-4 flex-shrink-0' />
+                  <p>Fare Calculator Results</p>
+                </>
+                : 
+                <>
+                  <svg className="w-4 h-4 flex-shrink-0" fill="#FFFFFF" xmlns="http://www.w3.org/2000/svg" id="mdi-calculator" viewBox="0 0 24 24"><path d="M7,2H17A2,2 0 0,1 19,4V20A2,2 0 0,1 17,22H7A2,2 0 0,1 5,20V4A2,2 0 0,1 7,2M7,4V8H17V4H7M7,10V12H9V10H7M11,10V12H13V10H11M15,10V12H17V10H15M7,14V16H9V14H7M11,14V16H13V14H11M15,14V16H17V14H15M7,18V20H9V18H7M11,18V20H13V18H11M15,18V20H17V18H15Z" /></svg>
+                  <p>Route Planner</p>
+                </>
+                }
+              </div>
+              </span>
+              <svg
+                className="w-5 h-5"
+                fill="#6a7282"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+              >
+                <path d="M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z" />
+              </svg>
+            </div>
+            {isSubmitted && startLocation && endLocation && (
+              <div className="text-xs text-gray-500 mt-2 truncate">
+                {startLocation} → {endLocation}
+              </div>
+            )}
+          </div>
+        ) : (
+          // Full section content
+          <AnimatePresence initial={false} mode="wait">
+            {!isSubmitted ? (
+              <motion.div
+                key="input"
+                initial={{ x: "-100%", opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                exit={{ x: "100%", opacity: 0 }}
+                transition={{ duration: 0.4, ease: "easeInOut" }}
+                className="w-full relative"
+              >
+                <InputForm
                   startLocation={startLocation}
+                  handleChangeInput={handleChangeInput}
+                  handleUserCurrentLocation={handleUserCurrentLocation}
+                  handleDeletePoint={handleDeletePoint}
+                  markers={markers}
+                  originSuggestions={originSuggestions}
+                  debouncedStartLocation={debouncedStartLocation}
+                  handleSelectSuggestion={handleSelectSuggestion}
                   endLocation={endLocation}
-                  setIsSubmitted={setIsSubmitted}
-                  error={error}
+                  destinationSuggestions={destinationSuggestions}
+                  debouncedEndLocation={debouncedEndLocation}
+                  vehicleType={vehicleType}
+                  setVehicleType={setVehicleType}
+                  passengerType={passengerType}
+                  setPassengerType={setPassengerType}
+                  fetchRoute={fetchRoute}
+                  handleMinimize={handleMinimize}
+                  handleClearAll={handleClearAll}
                 />
-              </Suspense>
-            </motion.div>
-          )}
-        </AnimatePresence>
+                {isLoading && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="absolute inset-0 flex items-center justify-center bg-white/80 z-10"
+                  >
+                    <Spinner />
+                  </motion.div>
+                )}
+              </motion.div>
+            ) : (
+              <motion.div
+                key="fare"
+                initial={{ x: "100%", opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                exit={{ x: "-100%", opacity: 0 }}
+                transition={{ duration: 0.4, ease: "easeInOut" }}
+                className="w-full relative"
+              >
+                <Suspense fallback={null}>
+                  <FareResult
+                    fareDetails={fareDetails}
+                    startLocation={startLocation}
+                    endLocation={endLocation}
+                    setIsSubmitted={setIsSubmitted}
+                    handleMinimize={handleMinimize}
+                    error={error}
+                  />
+                </Suspense>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        )}
       </section>
     </div>
   );

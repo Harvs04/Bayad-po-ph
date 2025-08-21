@@ -15,6 +15,7 @@ const InputForm = ({
   passengerType,
   setPassengerType,
   fetchRoute,
+  handleMinimize,
   handleClearAll,
 }) => {
   return (
@@ -42,6 +43,11 @@ const InputForm = ({
             Calculate fare and plan your journey
           </p>
         </div>
+
+        {/* Hide Input Fields */}
+        <button type="button" className='absolute top-4 right-4 cursor-pointer hover:bg-gray-100 hover:rounded-full p-1' onClick={handleMinimize}>
+          <svg className='w-6' fill='#99a1af' xmlns="http://www.w3.org/2000/svg" id="mdi-minus" viewBox="0 0 24 24"><path d="M19,13H5V11H19V13Z" /></svg>
+        </button>
       </div>
 
       {/* Pickup Point */}

@@ -1,6 +1,6 @@
 import BayadPoIcon from '../assets/jeepney_white.svg';
 
-const FareResult = ({ fareDetails, startLocation, endLocation, setIsSubmitted, error }) => {
+const FareResult = ({ fareDetails, startLocation, endLocation, setIsSubmitted, handleMinimize, error }) => {
   const startLoc = startLocation.split(",");
   const endLoc = endLocation.split(",");
 
@@ -35,7 +35,7 @@ const FareResult = ({ fareDetails, startLocation, endLocation, setIsSubmitted, e
   return (
     <div className="max-w-md mx-auto bg-white rounded-lg shadow-xl overflow-hidden">
       {/* Header */}
-      <div className="bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 text-white px-6 pt-6 pb-4">
+      <div className="relative bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 text-white px-6 pt-6 pb-4">
         <div className="flex items-center gap-3 mb-3">
           <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">
             <img src={BayadPoIcon} alt="logo" className='w-5 h-5' />
@@ -47,6 +47,11 @@ const FareResult = ({ fareDetails, startLocation, endLocation, setIsSubmitted, e
             </p>
           </div>
         </div>
+        
+        {/* Hide Button */}
+        <button type='button' className='absolute top-4 right-4 block cursor-pointer hover:bg-blue-700 hover:rounded-full p-1' onClick={handleMinimize}>
+          <svg className='w-6' fill='#FFFFFF' xmlns="http://www.w3.org/2000/svg" id="mdi-minus" viewBox="0 0 24 24"><path d="M19,13H5V11H19V13Z" /></svg>
+        </button>
 
         {/* Route - Compact */}
         <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3 mb-3">
