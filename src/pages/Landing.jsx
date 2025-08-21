@@ -403,7 +403,7 @@ function Landing() {
             </svg>
           </div>
           <h4 className="font-semibold text-white">Email Support</h4>
-          <p className="text-white/80 text-sm">support@farecalculator.ph</p>
+          <p className="text-white/80 text-sm">support@bayadpo.ph</p>
         </div>
 
         <div className="text-center space-y-2">
@@ -432,7 +432,7 @@ function Landing() {
       <div className="pt-8 border-t border-white/20 text-center space-y-4">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-white/80 text-sm">
-            &copy; 2025 Fare Calculator. All rights reserved.
+            &copy; {new Date().getFullYear()} Bayad Po. All rights reserved.
           </p>
           <div className="flex items-center gap-6 text-white/80 text-sm">
             <a href="/privacy" className="hover:text-white transition-colors">Privacy Policy</a>
