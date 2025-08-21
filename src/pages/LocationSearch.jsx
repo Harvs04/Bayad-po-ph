@@ -8,8 +8,8 @@ import InputForm from "../components/InputForm";
 import { motion, AnimatePresence } from "framer-motion";
 
 const LocationSearch = () => {
-  const Spinner = React.lazy(() => import('../components/Spinner'));
-  const FareResult = React.lazy(() => import('../components/FareResult'));
+  const Spinner = React.lazy(() => import("../components/Spinner"));
+  const FareResult = React.lazy(() => import("../components/FareResult"));
 
   const apiKey = import.meta.env.VITE_LOCATION_IQ_PUBLIC_TOKEN;
   const [debouncedStartLocation, setDebouncedStartLocation] = useState("");
@@ -45,12 +45,12 @@ const LocationSearch = () => {
   const handleChangeInput = (e, index) => {
     const value = e.target.value;
     if (index === 0) {
-      if (!isOriginPinned) {
+      if (!isOriginPinned || markers[0] == null) {
         setStartLocation(value);
         setIsOriginSuggestionSelected(false);
       }
     } else if (index === 1) {
-      if (!isDestinationPinned) {
+      if (!isDestinationPinned || markers[1] == null) {
         setEndLocation(value);
         setIsDestinationSuggestionSelected(false);
       }
@@ -106,6 +106,8 @@ const LocationSearch = () => {
         ? [[currentLoc.latitude, currentLoc.longitude], prev[1]]
         : [prev[0], [currentLoc.latitude, currentLoc.longitude]]
     );
+
+    index === 0 ? setOriginSuggestions([]) : setDestinationSuggestions([]);
   };
 
   const handleClearAll = () => {
@@ -252,7 +254,18 @@ const LocationSearch = () => {
       }
     } catch (error) {
       console.error("Error fetching reverse geocoding: ", error);
-      return "";
+      if (index === 0) {
+        setStartLocation("");
+        setIsOriginPinned(false);
+      } else if (index === 1) {
+        setEndLocation("");
+        setIsDestinationPinned(false);
+      }
+      setMarkers((prev) => {
+        const updated = [...prev];
+        updated[index] = null;
+        return updated;
+      });
     } finally {
       setIsLoading(false);
     }
@@ -345,7 +358,7 @@ const LocationSearch = () => {
     };
 
     fetchStartLocations();
-  }, [debouncedStartLocation, isOriginSuggestionSelected]);
+  }, [markers[0], debouncedStartLocation, isOriginSuggestionSelected]);
 
   useEffect(() => {
     const fetchEndLocations = async () => {
@@ -369,7 +382,7 @@ const LocationSearch = () => {
     };
 
     fetchEndLocations();
-  }, [debouncedEndLocation, isDestinationSuggestionSelected]);
+  }, [markers[1], debouncedEndLocation, isDestinationSuggestionSelected]);
 
   return (
     <div className="relative">
@@ -389,7 +402,7 @@ const LocationSearch = () => {
         />
       </div>
 
-      <section className="absolute bottom-0 right-4 md:top-4 z-[9999] bg-[#fbfdfb] rounded-lg shadow-sm pointer-events-auto max-w-sm h-fit overflow-hidden">
+      <section className="absolute bottom-0 right-2 md:top-2 z-[9999] bg-[#fbfdfb] rounded-md shadow-xl pointer-events-auto max-w-sm h-fit overflow-hidden">
         <AnimatePresence initial={false} mode="wait">
           {!isSubmitted ? (
             <motion.div
