@@ -1,16 +1,17 @@
+import React from "react";
 import { useEffect, useState } from "react";
 import "leaflet/dist/leaflet.css";
 import polyline from "@mapbox/polyline";
 import { useDebounce } from "react-use";
 import MapArea from "../components/MapArea";
 import InputForm from "../components/InputForm";
-import FareResult from "../components/FareResult";
 import { motion, AnimatePresence } from "framer-motion";
-import Spinner from "../components/Spinner";
 
 const LocationSearch = () => {
-  const apiKey = import.meta.env.VITE_LOCATION_IQ_PUBLIC_TOKEN;
+  const Spinner = React.lazy(() => import('../components/Spinner'));
+  const FareResult = React.lazy(() => import('../components/FareResult'));
 
+  const apiKey = import.meta.env.VITE_LOCATION_IQ_PUBLIC_TOKEN;
   const [debouncedStartLocation, setDebouncedStartLocation] = useState("");
   const [startLocation, setStartLocation] = useState("");
   const [debouncedEndLocation, setDebouncedEndLocation] = useState("");
