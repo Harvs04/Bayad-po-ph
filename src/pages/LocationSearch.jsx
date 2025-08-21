@@ -247,11 +247,19 @@ const LocationSearch = () => {
       const response = await fetch(endpoint);
       if (!response.ok) throw new Error("Network response was not ok");
       const data = await response.json();
-      if (index === 0) {
-        setStartLocation(data.display_name);
-      } else if (index === 1) {
-        setEndLocation(data.display_name);
+      if ((data.display_name).split(', ').at(-1) !== 'Philippines') {
+        if (index === 0) {
+          setMarkers(prev => [null, prev[1]]);
+          setIsOriginPinned(false);
+          setStartLocation('');
+        } else if (index === 1) {
+          setMarkers(prev => [prev[0], null]);
+          setIsDestinationPinned(false);
+          setEndLocation('');
+        }
+        return;
       }
+      index === 0 ? setStartLocation(data.display_name) : setEndLocation(data.display_name);
     } catch (error) {
       console.error("Error fetching reverse geocoding: ", error);
       if (index === 0) {
