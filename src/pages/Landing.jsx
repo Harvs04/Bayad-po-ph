@@ -31,10 +31,10 @@ function Landing() {
           action=""
           className="w-full md:w-1/3 flex flex-col items-center justify-center gap-4"
         >
-          <div class="w-full">
+          <div className="w-full">
             <label
-              for="pickup-point"
-              class="block mb-1 text-sm font-medium text-gray-900 dark:text-white"
+              htmlFor="pickup-point"
+              className="block mb-1 text-sm font-medium text-gray-900 dark:text-white"
             >
               Your pickup point
             </label>
@@ -43,12 +43,12 @@ function Landing() {
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
                 fill="#4CAF4F"
-                class="size-6 absolute left-2.5 top-1/2 transform -translate-y-1/2 text-gray-400"
+                className="size-6 absolute left-2.5 top-1/2 transform -translate-y-1/2 text-gray-400"
               >
                 <path
                   fillRule="evenodd"
                   d="m11.54 22.351.07.04.028.016a.76.76 0 0 0 .723 0l.028-.015.071-.041a16.975 16.975 0 0 0 1.144-.742 19.58 19.58 0 0 0 2.683-2.282c1.944-1.99 3.963-4.98 3.963-8.827a8.25 8.25 0 0 0-16.5 0c0 3.846 2.02 6.837 3.963 8.827a19.58 19.58 0 0 0 2.682 2.282 16.975 16.975 0 0 0 1.145.742ZM12 13.5a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"
-                  clip-rule="evenodd"
+                  clipRule="evenodd"
                 />
               </svg>
               <input
@@ -58,10 +58,10 @@ function Landing() {
               />
             </div>
           </div>
-          <div class="w-full">
+          <div className="w-full">
             <label
-              for="drop-off-point"
-              class="block mb-1 text-sm font-medium text-gray-900 dark:text-white"
+              htmlFor="drop-off-point"
+              className="block mb-1 text-sm font-medium text-gray-900 dark:text-white"
             >
               Your drop-off point
             </label>
@@ -70,12 +70,12 @@ function Landing() {
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
                 fill="#fc1e65"
-                class="size-6 absolute left-2.5 top-1/2 transform -translate-y-1/2 text-gray-400"
+                className="size-6 absolute left-2.5 top-1/2 transform -translate-y-1/2 text-gray-400"
               >
                 <path
                   fillRule="evenodd"
                   d="m11.54 22.351.07.04.028.016a.76.76 0 0 0 .723 0l.028-.015.071-.041a16.975 16.975 0 0 0 1.144-.742 19.58 19.58 0 0 0 2.683-2.282c1.944-1.99 3.963-4.98 3.963-8.827a8.25 8.25 0 0 0-16.5 0c0 3.846 2.02 6.837 3.963 8.827a19.58 19.58 0 0 0 2.682 2.282 16.975 16.975 0 0 0 1.145.742ZM12 13.5a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"
-                  clip-rule="evenodd"
+                  clipRule="evenodd"
                 />
               </svg>
               <input
@@ -86,7 +86,7 @@ function Landing() {
             </div>
           </div>
           <Link
-            class="text-[#4CAF4F] bg-white hover:bg-gray-100 focus:ring-4 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 cursor-pointer"
+            className="text-[#4CAF4F] bg-white hover:bg-gray-100 focus:ring-4 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 cursor-pointer"
             to={'/check-fare'}
           >
             How much is my fare?
