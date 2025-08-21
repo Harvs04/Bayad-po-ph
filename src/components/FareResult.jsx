@@ -132,12 +132,12 @@ const FareResult = ({ fareDetails, startLocation, endLocation, setIsSubmitted, e
                 />
               </svg>
             </div>
-            <p className="text-xs text-gray-500 mb-1">Time</p>
+            <p className="text-xs text-gray-500 mb-1">Travel Time</p>
             <p className="text-sm font-semibold text-gray-800">
               {fareDetails.duration / 3600 < 1
                 ? (fareDetails.duration / 60).toFixed(0)
                 : (fareDetails.duration / 3600).toFixed(1)}{" "}
-              {fareDetails.duration / 3600 < 1 ? "mins" : "hr/s"}
+              {fareDetails.duration / 3600 < 1 ? "mins" : "hrs"}
             </p>
           </div>
         </div>

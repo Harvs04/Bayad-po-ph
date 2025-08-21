@@ -18,7 +18,7 @@ const InputForm = ({
   handleClearAll,
 }) => {
   return (
-    <form className="p-6 space-y-6 bg-white rounded-xl shadow-lg border border-gray-200">
+    <form className="p-6 space-y-6 bg-white rounded-md shadow-lg border border-gray-200">
       {/* Header */}
       <div className="flex items-center gap-3 pb-4 border-b border-gray-200">
         <div className="w-10 h-10 bg-gradient-to-r from-green-500 to-green-600 rounded-xl flex items-center justify-center">
@@ -100,7 +100,7 @@ const InputForm = ({
           <button
             type="button"
             onClick={() => handleDeletePoint(0)}
-            disabled={markers[0] === null}
+            disabled={markers[0] == null}
             title="Remove origin"
             className="absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-lg enabled:hover:bg-red-100 transition-colors disabled:opacity-30 disabled:cursor-not-allowed group"
           >
@@ -201,7 +201,7 @@ const InputForm = ({
           <button
             type="button"
             onClick={() => handleDeletePoint(1)}
-            disabled={markers[1] === null}
+            disabled={markers[1] == null}
             title="Remove destination"
             className="absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-lg enabled:hover:bg-red-100 transition-colors disabled:opacity-30 disabled:cursor-not-allowed group"
           >
@@ -351,8 +351,8 @@ const InputForm = ({
         <button
           className="w-full bg-green-600 enabled:hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-md shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           disabled={
-            startLocation.trim() === "" ||
-            endLocation.trim() === "" ||
+            markers[0] == null ||
+            markers[1] == null ||
             passengerType === "" ||
             vehicleType === ""
           }
@@ -379,8 +379,8 @@ const InputForm = ({
         <button
           className="w-full bg-red-600/90 enabled:hover:bg-red-700 text-white font-semibold py-3 px-6 rounded-md shadow-md hover:shadow-lg disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           disabled={
-            startLocation.trim() === "" &&
-            endLocation.trim() === "" &&
+            markers[0] == null &&
+            markers[1] == null &&
             passengerType === "" &&
             vehicleType === ""
           }
